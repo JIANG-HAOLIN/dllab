@@ -7,17 +7,20 @@ from torch.utils.data import Dataset,DataLoader
 import csv
 import matplotlib.pyplot as plt
 import PIL.Image as Image
+import os
 
 # 把图像转换为tensor，和对应的标签包装到dataset里
 
 # path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/IDRID_dataset/images/resized_test/IDRiD_001.jpg"
 
-root_path = "/no_backups/s1434/lab/labdata/"
+# root_path = "/no_backups/s1434/lab/labdata/"
+root_path = os.path.join(r"D:\labdata")
+
 
 
 class Lab_Dataset(Dataset):
 
-    def __init__(self, root, train=True, transform = None, target_transform=None):
+    def __init__(self, root, train=True, transform=None, target_transform=None):
 
         super(Lab_Dataset, self).__init__()
 
@@ -71,6 +74,6 @@ class Lab_Dataset(Dataset):
 train_dataset = Lab_Dataset(root=root_path, train=True, transform=transforms.ToTensor())
 test_dataset = Lab_Dataset(root=root_path, train=False, transform=transforms.ToTensor())
 
-train_loader = DataLoader(dataset=train_dataset, batch_size=32, shuffle=True)
+train_loader = DataLoader(dataset=train_dataset, batch_size=4, shuffle=True)
 test_loader = DataLoader(dataset=test_dataset, batch_size=8, shuffle=True)
 
