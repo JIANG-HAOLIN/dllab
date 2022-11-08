@@ -9,8 +9,6 @@ import matplotlib.pyplot as plt
 import PIL.Image as Image
 import os
 
-# 把图像转换为tensor，和对应的标签包装到dataset里
-
 # path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/IDRID_dataset/images/resized_test/IDRiD_001.jpg"
 
 # root_path = "/no_backups/s1434/lab/labdata/"
@@ -56,7 +54,7 @@ class Lab_Dataset(Dataset):
         self.img_folder = img_folder
         for i in range(num_label):
             self.filenames.append(label_dict["Image name"][i])
-            self.labels.append(label_dict["Retinopathy grade"][i])
+            self.labels.append(0. if int(label_dict["Retinopathy grade"][i]) <= 1 else 1.)
             # self.labels[2].append(label_dict["Risk of macular edema "][i])
 
     def __getitem__(self, index):
@@ -74,6 +72,6 @@ class Lab_Dataset(Dataset):
 train_dataset = Lab_Dataset(root=root_path, train=True, transform=transforms.ToTensor())
 test_dataset = Lab_Dataset(root=root_path, train=False, transform=transforms.ToTensor())
 
-train_loader = DataLoader(dataset=train_dataset, batch_size=4, shuffle=True)
+train_loader = DataLoader(dataset=train_dataset, batch_size=8, shuffle=True)
 test_loader = DataLoader(dataset=test_dataset, batch_size=8, shuffle=True)
 
