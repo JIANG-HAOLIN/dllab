@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import numpy as np
+import torchvision.models
+
 
 class MyModel(nn.Module):
     def __init__(self, in_channels):
@@ -42,6 +44,9 @@ class MyModel(nn.Module):
         x = self.sigmoid(x)
         x = x.squeeze()
         return x
+
+efficient_model = torchvision.models.efficientnet_b3(weights=torchvision.models.EfficientNet_B3_Weights.DEFAULT)
+efficient_model.classifier = nn.Sequential(nn.Linear(1536, 1), nn.Sigmoid(), nn.Flatten())
 
 
 

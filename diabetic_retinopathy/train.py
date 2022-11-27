@@ -1,28 +1,32 @@
 import torch
 from tqdm import tqdm
-from models.architectures import MyModel
+from models.architectures import MyModel, efficient_model
 from input_pipeline.datasets import *
 from torch.nn import BCELoss
 import torch.optim as optim
 import matplotlib.pyplot as plt
+from evaluation.metrics import compute_matrix
 
 loss_fc = BCELoss()
 device = "cuda"
 
 
-mdl = MyModel(3).to(device)
-optimizer = optim.SGD(lr=0.00001, params=mdl.parameters(), weight_decay=20)
+mdl = efficient_model.to(device)
+optimizer = optim.Adam(mdl.parameters(), lr=3e-5, weight_decay=5e-4)
 
 store = []
-epoch = 100
+store_acu = []
+cur = []
+epoch = 1000
 
 for epc in range(epoch):
     for idx, i in tqdm(enumerate(train_loader)):
+        cur_iter = epc*413 + idx + 1
         img = i[0]
         label = i[1]
         img = img.to(device)
         y = mdl(img)
-        print(y.shape)
+        y = y.squeeze(1)
         label = label.to(torch.float).to(device)
 
         loss = loss_fc(y, label)
@@ -30,8 +34,11 @@ for epc in range(epoch):
         loss.backward()
         optimizer.step()
 
-        if idx // 1 == 0:
+        if cur_iter % 10 == 0:
+            cur.append(cur_iter)
+            mdl.eval()
             loss_val = 0
+            acu = 0
             for idx2, j in tqdm(enumerate(test_loader)):
                 with torch.no_grad():
                     mdl.eval()
@@ -39,10 +46,23 @@ for epc in range(epoch):
                     label = j[1]
                     img = img.to(device)
                     y = mdl(img)
+                    y = y.squeeze(1)
                     label = label.to(torch.float).to(device)
-                    loss_val = (loss_val*(idx2 + 1)+loss_fc(y, label))/(idx2+2)
+                    loss_val = (loss_val*idx2+loss_fc(y, label))/(idx2+1)
+                    _, accuracy = compute_matrix(y.detach().cpu().numpy(), label.detach().cpu().numpy())
+                    acu = (acu * idx2 + accuracy) / (idx2 + 1)
+
+            mdl.train()
 
             store.append(loss_val.item())
+            store_acu.append(acu)
+            fig = plt.figure()
+            plt.plot(cur, store)  # plot example
+            fig.savefig('loss.png')
+
+            fig2 = plt.figure()
+            plt.plot(cur, store_acu)  # plot example
+            fig2.savefig('accuracy.png')
 
 
 
@@ -50,9 +70,7 @@ for epc in range(epoch):
 
 
 
-fig = plt.figure()
-plt.plot(store)  # plot example
-fig.savefig('temp.png')
+
 
 
 

@@ -8,6 +8,9 @@ import csv
 import matplotlib.pyplot as plt
 import PIL.Image as Image
 import os
+# from find_mean_and_std import get_mean_std
+import albumentations as A
+import cv2
 
 # path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/IDRID_dataset/images/resized_test/IDRiD_001.jpg"
 
@@ -18,13 +21,12 @@ root_path = os.path.join(r"D:\labdata")
 
 class Lab_Dataset(Dataset):
 
-    def __init__(self, root, train=True, transform=None, target_transform=None):
+    def __init__(self, root, train=True, transform=None):
 
         super(Lab_Dataset, self).__init__()
 
         self.train = train
         self.transform = transform
-        self.target_transform = target_transform
 
         if self.train :
             file_annotation = root + "/IDRID_dataset/labels/train.csv"
@@ -61,17 +63,45 @@ class Lab_Dataset(Dataset):
         img_name = self.img_folder + self.filenames[index]
         label = self.labels[index]
         img = Image.open(img_name + ".jpg")
-        img = self.transform(img)
-
+        if self.transform is not None:
+            img = self.transform(img)
         return img, label
 
     def __len__(self):
         return len(self.filenames)
 
 
-train_dataset = Lab_Dataset(root=root_path, train=True, transform=transforms.ToTensor())
-test_dataset = Lab_Dataset(root=root_path, train=False, transform=transforms.ToTensor())
+train_transforms = transforms.Compose(
+    [
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.5424, 0.2638, 0.0875],
+            std=[0.4982, 0.4407, 0.2826],
+        ),
 
-train_loader = DataLoader(dataset=train_dataset, batch_size=8, shuffle=True)
-test_loader = DataLoader(dataset=test_dataset, batch_size=8, shuffle=True)
+    ]
+)
+
+val_transforms = transforms.Compose(
+    [
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.5424, 0.2638, 0.0875],
+            std=[0.4982, 0.4407, 0.2826],
+        ),
+
+    ]
+)
+
+train_dataset = Lab_Dataset(root=root_path, train=True, transform=train_transforms)
+test_dataset = Lab_Dataset(root=root_path, train=False, transform=val_transforms)
+
+train_loader = DataLoader(dataset=train_dataset, batch_size=4, shuffle=True)
+test_loader = DataLoader(dataset=test_dataset, batch_size=4, shuffle=True)
+
+# mean, std = get_mean_std(train_loader)
+
+#tensor([0.5424, 0.2638, 0.0875])
+#tensor([0.4982, 0.4407, 0.2826])
+
 
