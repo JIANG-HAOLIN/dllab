@@ -1,17 +1,25 @@
 import torch
+import torch.nn as nn
 from tqdm import tqdm
-from models.architectures import MyModel, efficient_model
+from models.architectures import MyModel, efficient_model, efficient_model_reg
 from input_pipeline.datasets import *
 from torch.nn import BCELoss
 import torch.optim as optim
 import matplotlib.pyplot as plt
 from evaluation.metrics import compute_matrix
 
-loss_fc = BCELoss()
+reg = True
+
 device = "cuda"
 
-
-mdl = efficient_model.to(device)
+if not reg:
+    loss_fc = BCELoss()
+    mdl = efficient_model.to(device)
+    train_loader = train_loader
+else:
+    loss_fc = nn.MSELoss()
+    mdl = efficient_model_reg.to(device)
+    train_loader = train_loader_reg
 optimizer = optim.Adam(mdl.parameters(), lr=3e-5, weight_decay=5e-4)
 
 store = []
@@ -47,6 +55,9 @@ for epc in range(epoch):
                     img = img.to(device)
                     y = mdl(img)
                     y = y.squeeze(1)
+                    if reg:
+                        y[(y >= 0.7)] = 1
+                        y[(y < 0.7)] = 0
                     label = label.to(torch.float).to(device)
                     loss_val = (loss_val*idx2+loss_fc(y, label))/(idx2+1)
                     _, accuracy = compute_matrix(y.detach().cpu().numpy(), label.detach().cpu().numpy())

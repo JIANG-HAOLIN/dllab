@@ -21,10 +21,10 @@ root_path = os.path.join(r"D:\labdata")
 
 class Lab_Dataset(Dataset):
 
-    def __init__(self, root, train=True, transform=None):
+    def __init__(self, root, train=True, transform=None, reg=False):
 
         super(Lab_Dataset, self).__init__()
-
+        self.reg = reg
         self.train = train
         self.transform = transform
 
@@ -56,8 +56,10 @@ class Lab_Dataset(Dataset):
         self.img_folder = img_folder
         for i in range(num_label):
             self.filenames.append(label_dict["Image name"][i])
-            self.labels.append(0. if int(label_dict["Retinopathy grade"][i]) <= 1 else 1.)
-            # self.labels[2].append(label_dict["Risk of macular edema "][i])
+            if not self.reg:
+                self.labels.append(0. if int(label_dict["Retinopathy grade"][i]) <= 1 else 1.)
+            else:
+                self.labels.append(int(label_dict["Retinopathy grade"][i]))
 
     def __getitem__(self, index):
         img_name = self.img_folder + self.filenames[index]
@@ -94,10 +96,13 @@ val_transforms = transforms.Compose(
 )
 
 train_dataset = Lab_Dataset(root=root_path, train=True, transform=train_transforms)
+train_dataset_reg = Lab_Dataset(root=root_path, train=True, transform=train_transforms, reg=True)
 test_dataset = Lab_Dataset(root=root_path, train=False, transform=val_transforms)
 
+
 train_loader = DataLoader(dataset=train_dataset, batch_size=4, shuffle=True)
-test_loader = DataLoader(dataset=test_dataset, batch_size=4, shuffle=True)
+train_loader_reg = DataLoader(dataset=train_dataset_reg, batch_size=4, shuffle=True)
+test_loader = DataLoader(dataset=test_dataset, batch_size=4, shuffle=False)
 
 # mean, std = get_mean_std(train_loader)
 

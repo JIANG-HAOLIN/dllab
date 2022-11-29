@@ -48,6 +48,7 @@ class MyModel(nn.Module):
 efficient_model = torchvision.models.efficientnet_b3(weights=torchvision.models.EfficientNet_B3_Weights.DEFAULT)
 efficient_model.classifier = nn.Sequential(nn.Linear(1536, 1), nn.Sigmoid(), nn.Flatten())
 
-
+efficient_model_reg = torchvision.models.efficientnet_b3(weights=torchvision.models.EfficientNet_B3_Weights.DEFAULT)
+efficient_model_reg.classifier = nn.Sequential(nn.Linear(1536, 1), nn.Flatten())
 
 
