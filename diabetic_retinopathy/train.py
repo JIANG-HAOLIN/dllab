@@ -24,6 +24,10 @@ optimizer = optim.Adam(mdl.parameters(), lr=3e-5, weight_decay=5e-4)
 
 store = []
 store_acu = []
+store_tp = []
+store_tn = []
+store_fp = []
+store_fn = []
 cur = []
 epoch = 1000
 
@@ -46,7 +50,7 @@ for epc in range(epoch):
             cur.append(cur_iter)
             mdl.eval()
             loss_val = 0
-            acu = 0
+            acu, tp, tn, fp, fn = 0, 0, 0, 0, 0
             for idx2, j in tqdm(enumerate(test_loader)):
                 with torch.no_grad():
                     mdl.eval()
@@ -61,19 +65,37 @@ for epc in range(epoch):
                     label = label.to(torch.float).to(device)
                     loss_val = (loss_val*idx2+loss_fc(y, label))/(idx2+1)
                     _, accuracy = compute_matrix(y.detach().cpu().numpy(), label.detach().cpu().numpy())
+                    tp, tn, fp, fn = (tp * idx2 + _[0]) / (idx2 + 1), (tn * idx2 + _[1]) / (idx2 + 1), (fp * idx2 + _[2])/(idx2 + 1), (fn * idx2 + _[3]) / (idx2 + 1)
                     acu = (acu * idx2 + accuracy) / (idx2 + 1)
 
             mdl.train()
 
             store.append(loss_val.item())
             store_acu.append(acu)
+            store_tp.append(tp)
+            store_tn.append(tn)
+            store_fp.append(fp)
+            store_fn.append(fn)
+
             fig = plt.figure()
-            plt.plot(cur, store)  # plot example
+            plt.plot(cur, store, label="val_loss")  # plot example
+            plt.legend()
             fig.savefig('loss.png')
 
             fig2 = plt.figure()
-            plt.plot(cur, store_acu)  # plot example
+            plt.plot(cur, store_acu, label="accuracy")  # plot example
+            plt.legend()
             fig2.savefig('accuracy.png')
+
+            fig3 = plt.figure()
+            plt.plot(cur, store_tp, label="TP")  # plot example
+            plt.plot(cur, store_tn, label="TN")  # plot example
+            plt.plot(cur, store_fp, label="FP")  # plot example
+            plt.plot(cur, store_fn, label="FN")  # plot example
+            plt.legend(loc='upper left')
+            fig3.savefig('Confusion_Matrix.png')
+
+
 
 
 
