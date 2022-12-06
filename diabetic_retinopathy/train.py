@@ -14,9 +14,6 @@ writer = SummaryWriter("logs")
 device = "cuda"
 
 
-
-
-
 if not reg:
     loss_fc = BCELoss()
     mdl = efficient_model.to(device)
