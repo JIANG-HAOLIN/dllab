@@ -7,9 +7,10 @@ from torch.nn import BCELoss
 import torch.optim as optim
 import matplotlib.pyplot as plt
 from evaluation.metrics import compute_matrix
+from torch.utils.tensorboard import SummaryWriter
 
-reg = True
-
+reg = False
+writer = SummaryWriter("logs")
 device = "cuda"
 
 if not reg:
@@ -20,7 +21,7 @@ else:
     loss_fc = nn.MSELoss()
     mdl = efficient_model_reg.to(device)
     train_loader = train_loader_reg
-optimizer = optim.Adam(mdl.parameters(), lr=3e-5, weight_decay=5e-4)
+optimizer = optim.Adam(mdl.parameters(), lr=3e-5, weight_decay=5e-3)
 
 store = []
 store_acu = []
@@ -40,13 +41,13 @@ for epc in range(epoch):
         y = mdl(img)
         y = y.squeeze(1)
         label = label.to(torch.float).to(device)
-
         loss = loss_fc(y, label)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
         if cur_iter % 10 == 0:
+            writer.add_scalar("train loss", loss.item(), cur_iter)
             cur.append(cur_iter)
             mdl.eval()
             loss_val = 0
@@ -60,8 +61,8 @@ for epc in range(epoch):
                     y = mdl(img)
                     y = y.squeeze(1)
                     if reg:
-                        y[(y >= 0.7)] = 1
-                        y[(y < 0.7)] = 0
+                        y[(y >= 0.4)] = 1
+                        y[(y < 0.4)] = 0
                     label = label.to(torch.float).to(device)
                     loss_val = (loss_val*idx2+loss_fc(y, label))/(idx2+1)
                     _, accuracy = compute_matrix(y.detach().cpu().numpy(), label.detach().cpu().numpy())
@@ -69,13 +70,16 @@ for epc in range(epoch):
                     acu = (acu * idx2 + accuracy) / (idx2 + 1)
 
             mdl.train()
-
             store.append(loss_val.item())
             store_acu.append(acu)
             store_tp.append(tp)
             store_tn.append(tn)
             store_fp.append(fp)
             store_fn.append(fn)
+            writer.add_scalar("test loss", loss_val.item(), cur_iter)
+            writer.add_scalar("test accuracy", acu, cur_iter)
+
+
 
             fig = plt.figure()
             plt.plot(cur, store, label="val_loss")  # plot example
@@ -95,7 +99,7 @@ for epc in range(epoch):
             plt.legend(loc='upper left')
             fig3.savefig('Confusion_Matrix.png')
 
-
+writer.close()
 
 
 

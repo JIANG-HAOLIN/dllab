@@ -21,12 +21,13 @@ root_path = os.path.join(r"D:\labdata")
 
 class Lab_Dataset(Dataset):
 
-    def __init__(self, root, train=True, transform=None, reg=False):
+    def __init__(self, root, train=True, transform=None, reg=False, weighting=False):
 
         super(Lab_Dataset, self).__init__()
         self.reg = reg
         self.train = train
         self.transform = transform
+        self.weighting = weighting
 
         if self.train :
             file_annotation = root + "/IDRID_dataset/labels/train.csv"
@@ -56,8 +57,16 @@ class Lab_Dataset(Dataset):
         self.img_folder = img_folder
         for i in range(num_label):
             self.filenames.append(label_dict["Image name"][i])
+            if self.weighting:
+                if int(label_dict["Retinopathy grade"][i]) == 1:
+                    self.filenames.append(label_dict["Image name"][i])
+
             if not self.reg:
                 self.labels.append(0. if int(label_dict["Retinopathy grade"][i]) <= 1 else 1.)
+                if self.weighting:
+                    if int(label_dict["Retinopathy grade"][i]) == 1:
+                        self.labels.append(0. if int(label_dict["Retinopathy grade"][i]) <= 1 else 1.)
+
             else:
                 self.labels.append(int(label_dict["Retinopathy grade"][i]))
 
@@ -95,7 +104,7 @@ val_transforms = transforms.Compose(
     ]
 )
 
-train_dataset = Lab_Dataset(root=root_path, train=True, transform=train_transforms)
+train_dataset = Lab_Dataset(root=root_path, train=True, transform=train_transforms, weighting=False)
 train_dataset_reg = Lab_Dataset(root=root_path, train=True, transform=train_transforms, reg=True)
 test_dataset = Lab_Dataset(root=root_path, train=False, transform=val_transforms)
 
