@@ -13,6 +13,10 @@ reg = False
 writer = SummaryWriter("logs")
 device = "cuda"
 
+
+
+
+
 if not reg:
     loss_fc = BCELoss()
     mdl = efficient_model.to(device)
@@ -23,6 +27,12 @@ else:
     train_loader = train_loader_reg
 optimizer = optim.Adam(mdl.parameters(), lr=3e-5, weight_decay=5e-3)
 
+def load_best(model):
+    model2 = torch.load("./best_epoch.pth")
+    model.load_state_dict(model2)
+
+
+
 store = []
 store_acu = []
 store_tp = []
@@ -31,6 +41,7 @@ store_fp = []
 store_fn = []
 cur = []
 epoch = 1000
+best_acu = 0
 
 for epc in range(epoch):
     for idx, i in tqdm(enumerate(train_loader)):
@@ -79,6 +90,9 @@ for epc in range(epoch):
             writer.add_scalar("test loss", loss_val.item(), cur_iter)
             writer.add_scalar("test accuracy", acu, cur_iter)
 
+            if acu > best_acu:
+                best_acu = acu
+                torch.save(mdl.state_dict(), "./best_epoch.pth")
 
 
             fig = plt.figure()
