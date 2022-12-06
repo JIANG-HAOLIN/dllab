@@ -45,10 +45,43 @@ class MyModel(nn.Module):
         x = x.squeeze()
         return x
 
-efficient_model = torchvision.models.efficientnet_b3(pretrained=True)
-efficient_model.classifier = nn.Sequential(nn.Linear(1536, 1), nn.Sigmoid(), nn.Flatten())
+class Efficient_model_double(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.efficient_model = torchvision.models.efficientnet_b3(pretrained=True)
 
-efficient_model_reg = torchvision.models.efficientnet_b3(pretrained=True)
-efficient_model_reg.classifier = nn.Sequential(nn.Linear(1536, 1), nn.Flatten())
+        self.fc1 = nn.Linear(1536, 2)
+        self.fc2 = nn.Linear(1536, 2)
+        self.softmax = nn.Softmax(dim=1)
+
+    def forward(self, x):
+        x = self.efficient_model.features(x)
+        x = self.efficient_model.avgpool(x)
+        x = torch.flatten(x, 1)
+        return self.softmax(self.fc1(x)), self.softmax(self.fc2(x))
+
+
+
+
+
+def get_efficient_model(origin=False, ema=False, reg=False):
+    if origin:
+        efficient_model = torchvision.models.efficientnet_b3(pretrained=True)
+        efficient_model.classifier = nn.Sequential(nn.Linear(1536, 2), nn.Sigmoid(), nn.Flatten())
+        return efficient_model
+    if ema:
+        efficient_model = Efficient_model_double()
+        for para in efficient_model.parameters():
+            para.detach()
+        return efficient_model
+    if reg:
+        efficient_model_reg = torchvision.models.efficientnet_b3(pretrained=True)
+        efficient_model_reg.classifier = nn.Sequential(nn.Linear(1536, 1), nn.Flatten())
+        return efficient_model_reg
+    else:
+        efficient_model = Efficient_model_double()
+        return efficient_model
+
+
 
 

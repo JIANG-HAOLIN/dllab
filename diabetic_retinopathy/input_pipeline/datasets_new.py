@@ -23,24 +23,6 @@ from albumentations.pytorch import ToTensorV2
 
 
 
-
-
-def stack(a):
-    B, C, H, W = a.shape[0], a.shape[1], a.shape[2], a.shape[3]
-    size = 2
-    Y = H // size
-    X = W // size
-    m = a[:, :, :Y, :X]
-    n = a[:, :, Y:, :X]
-    q = a[:, :, :Y, X:]
-    p = a[:, :, Y:, X:]
-    a = torch.cat([m, n, p, q],0)
-
-    return a
-
-
-
-
 class Lab_Dataset(Dataset):
 
     def __init__(self, root='../',which='IDRID_dataset', train=True, transform=None,wanted_size=None, reg=False):
@@ -50,16 +32,16 @@ class Lab_Dataset(Dataset):
         self.train = train
         self. transform = transform
         self.reg = reg
-        if which == 'IDRID_dataset' :
-            if self.train :
+        if which == 'IDRID_dataset':
+            if self.train:
                 file_annotation = root + "/labels/train.csv"
                 img_folder = root + which+"_preprocessed_train_size%sx%s/" %(wanted_size,wanted_size)
             else:
                 file_annotation = root + "/labels/test.csv"
                 img_folder = root + which+"_preprocessed_test_size%sx%s/" %(wanted_size,wanted_size)
-        else :
+        else:
             if self.train :
-                file_annotation = root + "/labels/" +which+"_train.csv"
+                file_annotation = root + "/labels/" +which+"_test.csv"
                 img_folder = root + which+"_preprocessed_train_size%sx%s/" %(wanted_size,wanted_size)
             else:
                 file_annotation = root + "/labels/" +which+"_test.csv"
@@ -115,27 +97,6 @@ train_transforms = transforms.Compose(
     [
 
 
-
-
-        # A.Resize(width=760, height=760),
-        # A.RandomCrop(height=728, width=728),
-        # A.HorizontalFlip(p=0.5),
-        # A.VerticalFlip(p=0.5),
-        # A.RandomRotate90(p=0.5),
-        # A.Blur(p=0.3),
-        # A.CLAHE(p=0.3),
-        # A.ColorJitter(p=0.3),
-        # A.CoarseDropout(max_holes=12, max_height=20, max_width=20, p=0.3),
-        # A.Affine(shear=30, rotate=0, p=0.2),
-        # A.Normalize(
-        #     mean=[0.5424, 0.2638, 0.0875],
-        #     std=[0.4982, 0.4407, 0.2826],
-        # ),
-        # ToTensorV2(),
-        # print("1111111111")
-
-
-
         # transforms.RandomResizedCrop(size=int(wanted_size)),
         transforms.RandomHorizontalFlip(p=0.5),
         transforms.RandomVerticalFlip(p=0.5),
@@ -161,11 +122,6 @@ train_transforms = transforms.Compose(
 
 val_transforms = transforms.Compose(
     [
-        # A.Normalize(
-        #     mean=[0.5424, 0.2638, 0.0875],
-        #     std=[0.4982, 0.4407, 0.2826],
-        # ),
-        # ToTensorV2(),
 
         transforms.ToTensor(),
         transforms.Normalize(
@@ -176,24 +132,6 @@ val_transforms = transforms.Compose(
     ]
 )
 
-
-# def get_simclr_pipeline_transform(size, s=1):
-#     """Return a set of data augmentation transformations as described in the SimCLR paper."""
-#     color_jitter = transforms.ColorJitter(
-#         brightness=(0.9, 1.1),
-#         contrast=(1),
-#         saturation=(0.9, 1.1),
-#         hue=(-0.1, 0.1)
-#     )
-#     data_transforms = transforms.Compose(
-#         [transforms.RandomResizedCrop(size=size),
-#          transforms.RandomHorizontalFlip(),
-#          transforms.RandomApply([color_jitter], p=0.8),
-#          transforms.RandomGrayscale(p=0.2),
-#          GaussianBlur(kernel_size=int(0.1 * size)),
-#          transforms.ToTensor()]
-#     )
-#     return data_transforms
 
 class Lab_kaggle_Dataset(Dataset):
 
@@ -218,10 +156,6 @@ class Lab_kaggle_Dataset(Dataset):
             else:
                 file_annotation = root + "/labels/" +which+"_test.csv"
                 img_folder = root + which+"_preprocessed_train_size%sx%s/" %(wanted_size,wanted_size)
-
-
-
-
 
 
 
@@ -270,26 +204,17 @@ def get_both_loader(root_path='../',which='IDRID_dataset',batch_size=12,wanted_s
     train_loader = DataLoader(dataset=train_dataset,batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(dataset=test_dataset,batch_size=batch_size, shuffle=True)
 
-    return train_loader,test_loader
+    return train_loader, test_loader
 
-def get_kaggle_test_loader(root_path='../',which='kaggle',batch_size=12,wanted_size=728,reg=False):
+def get_kaggle_loader(train=False, root_path='../',which='kaggle',batch_size=12,wanted_size=728,reg=False):
 
     kaggle_test_dataset = Lab_kaggle_Dataset(root=root_path, which=which,
-                               train=False, transform=val_transforms, wanted_size=wanted_size,reg=reg)
+                               train=train, transform=val_transforms, wanted_size=wanted_size,reg=reg)
 
     test_loader = DataLoader(dataset=kaggle_test_dataset,batch_size=batch_size, shuffle=True)
 
     return test_loader
 
-# mean, std = get_mean_std(train_loader)
 
-#tensor([0.5424, 0.2638, 0.0875])
-#tensor([0.4982, 0.4407, 0.2826])
-
-loader = get_kaggle_test_loader()
-for step,(images,labels) in enumerate(loader):
-    if step <= 0:
-        plt.imshow(images[0].permute(1,2,0))
-        plt.show()
 
 
