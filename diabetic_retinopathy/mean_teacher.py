@@ -18,7 +18,7 @@ device = "cuda"
 
 if not reg:
     loss_fc = nn.CrossEntropyLoss()
-    mdl = get_efficient_model().to(device)
+    mdl = get_efficient_model(pretrained=True).to(device)
     train_loader = train_loader
 else:
     loss_fc = nn.MSELoss()
@@ -26,7 +26,7 @@ else:
     train_loader = train_loader_reg
 
 if ema:
-    ema_mdl = get_efficient_model(ema=True, reg=False).to(device)
+    ema_mdl = get_efficient_model(ema=True, reg=False, pretrained=True).to(device)
 
 optimizer = optim.Adam(mdl.parameters(), lr=3e-5, weight_decay=5e-3)
 # optimizer = torch.optim.SGD(mdl.parameters(), 3e-5,
@@ -55,7 +55,7 @@ store_tn = []
 store_fp = []
 store_fn = []
 cur = []
-round = 1000
+round = 100000
 best_acu = 0
 
 it_labeled = iter(train_loader)
@@ -163,6 +163,7 @@ for cur_iter, rd in enumerate(range(round)):
         plt.plot(cur, store_fn, label="FN")  # plot example
         plt.legend(loc='upper left')
         fig3.savefig('Confusion_Matrix.png')
+        plt.cla()
 
 writer.close()
 
