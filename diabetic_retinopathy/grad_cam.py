@@ -71,15 +71,8 @@ trained_model_path = './grad-cam-try.pth.pth'
 
 mdl = get_model(reg).to(device)
 
-mdl.load_state_dict(
-                            torch.load(
-                                       root_path+'/'+opt.out_name + '.pth',
-                                       map_location=torch.device('cpu')
-                                       )
-                          )
+mdl.load_state_dict(torch.load(root_path+'/'+opt.out_name + '.pth',map_location=torch.device('cpu')))
 
-# model = torch.hub.load('facebookresearch/deit:main',
-#                        'deit_tiny_patch16_224', pretrained=True)
 
 mdl.eval()
 

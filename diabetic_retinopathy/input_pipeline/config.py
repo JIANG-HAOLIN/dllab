@@ -16,4 +16,5 @@ def add_all_arguments(parser):
     parser.add_argument('--batch_size', type=int, default=12, help='input batch size')
     parser.add_argument('--out_name', type=str, default='test', help='result png name')
     parser.add_argument('--regression',default=False, action='store_true', help="progressive model or normal")
+    parser.add_argument('--continue', default=False, action='store_true', help="continue train from best epoch")
     return parser

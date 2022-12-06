@@ -89,7 +89,6 @@ train_transforms = transforms.Compose(
             mean=[0.5424, 0.2638, 0.0875],
             std=[0.4982, 0.4407, 0.2826],
         ),
-
     ]
 )
 
@@ -100,7 +99,17 @@ val_transforms = transforms.Compose(
             mean=[0.5424, 0.2638, 0.0875],
             std=[0.4982, 0.4407, 0.2826],
         ),
+    ]
+)
 
+kaggle_transforms = transforms.Compose(
+    [
+        transforms.ToTensor(),
+        transforms.Resize([512, 512]),
+        transforms.Normalize(
+            mean=[0.4408, 0.3105, 0.2273],
+            std=[0.4965, 0.4627, 0.4191],
+        ),
     ]
 )
 
@@ -108,14 +117,33 @@ train_dataset = Lab_Dataset(root=root_path, train=True, transform=train_transfor
 train_dataset_reg = Lab_Dataset(root=root_path, train=True, transform=train_transforms, reg=True)
 test_dataset = Lab_Dataset(root=root_path, train=False, transform=val_transforms)
 
+train_loader = DataLoader(dataset=train_dataset, batch_size=2, shuffle=True)
+train_loader_reg = DataLoader(dataset=train_dataset_reg, batch_size=2, shuffle=True)
+test_loader = DataLoader(dataset=test_dataset, batch_size=2, shuffle=False)
 
-train_loader = DataLoader(dataset=train_dataset, batch_size=4, shuffle=True)
-train_loader_reg = DataLoader(dataset=train_dataset_reg, batch_size=4, shuffle=True)
-test_loader = DataLoader(dataset=test_dataset, batch_size=4, shuffle=False)
+class Kaggle_Dataset(Dataset):
 
-# mean, std = get_mean_std(train_loader)
+    def __init__(self, root, transform=None):
 
-#tensor([0.5424, 0.2638, 0.0875])
-#tensor([0.4982, 0.4407, 0.2826])
+        super(Kaggle_Dataset, self).__init__()
+        self.kaggle_path = root + "/kaggle_dataset"
+        self.kaggle_file_list = os.listdir(self.kaggle_path)
+        self.transform = transform
+
+    def __getitem__(self, index):
+        img_name = self.kaggle_file_list[index]
+        img = Image.open(os.path.join(self.kaggle_path, img_name))
+        label = -1
+        img = self.transform(img)
+        return img, label
+
+    def __len__(self):
+        return len(self.kaggle_file_list)
+
+kaggle_data = Kaggle_Dataset(root_path, transform=kaggle_transforms)
+kaggle_loader = DataLoader(dataset=kaggle_data, batch_size=2, shuffle=True)
+
+
+
 
 
