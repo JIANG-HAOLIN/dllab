@@ -8,7 +8,7 @@ import csv
 import matplotlib.pyplot as plt
 import PIL.Image as Image
 import os
-from preprocessing import usr_dict
+from HAPT.inputpipeline.preprocessing import usr_dict
 
 
 data_root_path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/HAPT Data Set/RawData/"
@@ -51,24 +51,35 @@ class creat_Dataset(Dataset):
                         samples.append(window)
                         labels.append(sequence['label'])
         self.samples = torch.Tensor(samples)#####！！必须具有单一维度！！
+        print('in total %d sequences' % self.samples.shape[0],
+              'each sequence has %d samples' % self.samples.shape[1])
         self.labels = torch.Tensor(labels)
     def __getitem__(self,index):
-        return self.samples[index],self.labels[index]
+        sample = self.samples[index]
+        label = self.labels[index]
+        return sample,label
     def __len__(self):
         return len(self.samples)
 
-train_dataset = creat_Dataset(mode='train',Window_shift=125,Window_length=250)
-test_dataset = creat_Dataset(mode='test',Window_shift=125,Window_length=250)
-validation_dataset = creat_Dataset(mode='validation',Window_shift=125,Window_length=250)
+# train_dataset = creat_Dataset(mode='train',Window_shift=125,Window_length=250)
+# test_dataset = creat_Dataset(mode='test',Window_shift=125,Window_length=250)
+# validation_dataset = creat_Dataset(mode='validation',Window_shift=125,Window_length=250)
+#
+# train_loader = DataLoader(train_dataset,batch_size=3,shuffle=True)
+# test_loader = DataLoader(test_dataset,batch_size=3,shuffle=True)
+# validation_loader = DataLoader(validation_dataset,batch_size=3,shuffle=True)
 
-train_loader = DataLoader(train_dataset,batch_size=3,shuffle=True)
-test_loader = DataLoader(test_dataset,batch_size=3,shuffle=True)
-validation_loader = DataLoader(validation_dataset,batch_size=3,shuffle=True)
+def get_dataloader(mode='train',Window_shift=125,Window_length=250,batch_size=3,shuffle=True):
+    dataset = creat_Dataset(mode=mode,Window_shift=125,Window_length=250)
+    return DataLoader(dataset,batch_size=batch_size,shuffle=shuffle)
 
 
-for step,data in enumerate(train_loader):##!!!!!!
-    if step <= 0:
-        print(data[0].shape,data[1])
+
+
+# train_loader = get_dataloader(mode='train',Window_shift=125,Window_length=250,batch_size=3,shuffle=True)
+# for step,data in enumerate(train_loader):##!!!!!!
+#     if step <= 0:
+#         print(data[0].shape,data[1])
 
 
 

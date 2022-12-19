@@ -43,5 +43,5 @@ with open(root_path+'labels.txt','r') as label_file:
         usr_dict[usr_index][exp_index].append({'starting_time':starting_time,
                                                'ending_time':ending_time,
                                                'label':label})
-np.save('label_dict.npy',dict)
+# np.save('label_dict.npy',dict)
 # print(usr_dict[10][20])
