@@ -6,12 +6,12 @@ from torch.utils.data import Dataset, DataLoader
 import numpy as np
 
 
-root_path = "D:\HAPTDataSet\RawData/"
+root_path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/HAPT Data Set/RawData"
 
 datadict = {}
 
 
-file = pd.read_csv("D:\HAPTDataSet\RawData\labels.txt",header=None)
+file = pd.read_csv("/Users/hlj/Documents/NoSync.nosync/DL_Lab/HAPT Data Set/RawData/labels.txt",header=None)
 
 idx = 1
 for row in file.values:
@@ -25,6 +25,7 @@ for row in file.values:
     idx += 1
 
 length = len(file.values)
+print(length)
 
 
 matrix2 = []
