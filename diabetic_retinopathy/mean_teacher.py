@@ -29,10 +29,11 @@ if ema:
     ema_mdl = get_efficient_model(ema=True, reg=False, pretrained=True).to(device)
 
 optimizer = optim.Adam(mdl.parameters(), lr=3e-5, weight_decay=5e-3)
-# optimizer = torch.optim.SGD(mdl.parameters(), 3e-5,
+# optimizer = torch.optim.SGD(mdl.parameters(), 3e-3,
 #                             momentum=0.9,
-#                             weight_decay=2e-4,
+#                             weight_decay=5e-3,
 #                             nesterov=True)
+# scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1000, gamma=0.5)
 
 def load_best(model):
     model2 = torch.load("./best_epoch.pth")
@@ -101,8 +102,8 @@ for cur_iter, rd in enumerate(range(round)):
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
-
     update_ema_variables(mdl, ema_mdl, cur_iter)
+    # scheduler.step()
 
     if cur_iter % 10 == 0:
         writer.add_scalar("train loss", loss.item(), cur_iter)
@@ -113,7 +114,7 @@ for cur_iter, rd in enumerate(range(round)):
         mdl.eval()
         ema_mdl.eval()
 
-        for idx2, j in tqdm(enumerate(test_loader)):
+        for idx2, j in tqdm(enumerate(kaggle_test_loader)):
             with torch.no_grad():
                 img = j[0]
                 label = j[1]

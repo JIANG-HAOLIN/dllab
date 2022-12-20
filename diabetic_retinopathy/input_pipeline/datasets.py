@@ -11,7 +11,7 @@ import os
 # from find_mean_and_std import get_mean_std
 import albumentations as A
 import cv2
-
+import pandas as pd
 # path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/IDRID_dataset/images/resized_test/IDRiD_001.jpg"
 
 # root_path = "/no_backups/s1434/lab/labdata/"
@@ -49,7 +49,7 @@ class Lab_Dataset(Dataset):
                 label_dict["Retinopathy grade"].append(row["Retinopathy grade"])
                 # label_dict["Risk of macular edema "].append(row["Risk of macular edema "])
 
-        assert len(label_dict["Image name"])==len(label_dict["Retinopathy grade"])
+        assert len(label_dict["Image name"]) == len(label_dict["Retinopathy grade"])
         num_label = len(label_dict["Image name"])
 
         self.filenames = []
@@ -87,8 +87,9 @@ train_transforms = transforms.Compose(
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.5424, 0.2638, 0.0875],
-            std=[0.4982, 0.4407, 0.2826],
-        ),
+            std=[0.4982, 0.4407, 0.2826]),
+        transforms.RandomHorizontalFlip(0.5),
+        transforms.RandomVerticalFlip(0.5)
     ]
 )
 
@@ -102,14 +103,25 @@ val_transforms = transforms.Compose(
     ]
 )
 
+kaggle_transforms_test = transforms.Compose(
+    [
+        transforms.ToTensor(),
+        transforms.Resize([512, 512]),
+        transforms.Normalize(
+            mean=[0.4408, 0.3105, 0.2273],
+            std=[0.4965, 0.4627, 0.4191]),
+    ]
+)
+
 kaggle_transforms = transforms.Compose(
     [
         transforms.ToTensor(),
         transforms.Resize([512, 512]),
         transforms.Normalize(
             mean=[0.4408, 0.3105, 0.2273],
-            std=[0.4965, 0.4627, 0.4191],
-        ),
+            std=[0.4965, 0.4627, 0.4191]),
+        transforms.RandomHorizontalFlip(0.5),
+        transforms.RandomVerticalFlip(0.5)
     ]
 )
 
@@ -126,7 +138,7 @@ class Kaggle_Dataset(Dataset):
     def __init__(self, root, transform=None):
 
         super(Kaggle_Dataset, self).__init__()
-        self.kaggle_path = root + "/kaggle_dataset"
+        self.kaggle_path = root + "/kaggle_big"
         self.kaggle_file_list = os.listdir(self.kaggle_path)
         self.transform = transform
 
@@ -140,8 +152,38 @@ class Kaggle_Dataset(Dataset):
     def __len__(self):
         return len(self.kaggle_file_list)
 
+class Kaggle_Dataset_test(Dataset):
+
+    def __init__(self, root, transform=None):
+
+        super(Kaggle_Dataset_test, self).__init__()
+        self.kaggle_path = root + "/kaggle_dataset"
+        self.kaggle_file_list = os.listdir(self.kaggle_path)
+        self.transform = transform
+        self.labels = pd.read_csv(os.path.join(root, "kaggle_test.csv"), index_col=0)
+
+    def __getitem__(self, index):
+        img_name = self.kaggle_file_list[index]
+        img = Image.open(os.path.join(self.kaggle_path, img_name))
+        img_name = img_name.split(".")[0]
+        label = 0 if int(self.labels.loc[img_name]) <= 1 else 1
+        img = self.transform(img)
+        return img, label
+
+    def __len__(self):
+        return len(self.kaggle_file_list)
+        # return self.labels.shape[0]
+
+
+
 kaggle_data = Kaggle_Dataset(root_path, transform=kaggle_transforms)
 kaggle_loader = DataLoader(dataset=kaggle_data, batch_size=2, shuffle=True)
+
+kaggle_test_data = Kaggle_Dataset_test(root_path, transform=kaggle_transforms_test)
+kaggle_test_loader = DataLoader(dataset=kaggle_test_data, batch_size=2, shuffle=False)
+#
+
+
 
 
 
