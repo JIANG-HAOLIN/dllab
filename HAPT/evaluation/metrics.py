@@ -1,15 +1,12 @@
 import numpy as np
 
 
-def compute_matrix_CE(output, label):
+def compute_accuracy(output, label):
     total = output.shape[0]
     output = np.argmax(output, axis=1)
-    correct = output == label
+    correct = output == label ####[False False False]
     incorrect = output != label
 
-    TP = np.count_nonzero(correct[output == 1] == True)/total
-    TN = np.count_nonzero(correct[output == 0] == True)/total
-    FP = np.count_nonzero((incorrect)[output == 1] == True)/total
-    FN = np.count_nonzero((incorrect)[output == 0] == True) / total
+    accuracy = sum(correct)/total
+    return accuracy
 
-    return [TP, TN, FP, FN], TP+TN
