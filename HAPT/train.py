@@ -42,7 +42,7 @@ best_accu = 0
 
 
 for epoch in range(epoch):
-    for step,(input,label,_,_) in tqdm(enumerate(train_loader)):##!!!!!!
+    for step,(input,label,_,_) in enumerate(train_loader):##!!!!!!
         cur_iter = epoch*(int(2550/batch_size)) + step + 1
         #input.shape [3,250,6]
         input,label = preprocess_input(input,label,device)
@@ -59,13 +59,13 @@ for epoch in range(epoch):
             accu = 0
             loss_val = 0
 
-            for step_val,(val_input,val_label,_,_) in tqdm(enumerate(validation_loader)):
+            for step_val,(val_input,val_label,_,_) in enumerate(validation_loader):
                 with torch.no_grad():
                     val_input, val_label = preprocess_input(val_input, val_label, device)
                     val_output = mdl(val_input)
                     loss_val = (loss_val * step_val + loss_computer(val_output, val_label)) / (step_val + 1)##??
                     # print(val_output,val_label)
-                    accuracy = compute_accuracy(output.detach().cpu().numpy(), label.detach().cpu().numpy())##??
+                    accuracy = compute_accuracy(val_output.detach().cpu().numpy(), val_label.detach().cpu().numpy())##??
                     # print(accuracy)
                     accu = (accu * step_val + accuracy) / (step_val + 1)##validation set的平均accuracy
 
@@ -76,8 +76,9 @@ for epoch in range(epoch):
             writer.add_scalar("validation accuracy", accu, cur_iter)
 
             if accu > best_accu:
-                best_acu = accu
-                torch.save(mdl.state_dict(), "./best_epoch.pth")
+                best_accu = accu
+                print(f'at epoch{epoch} has best validation accuracy:',best_accu)
+                torch.save(mdl.state_dict(), out_name+"best_epoch.pth")
 
             fig = plt.figure()
             plt.plot(cur, loss_list, label="val_loss")  # plot example
