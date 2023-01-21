@@ -16,7 +16,7 @@ import pandas as pd
 
 root_path = "/no_backups/s1422/LAB/labdata/"
 # root_path = os.path.join(r"D:\labdata")
-batchsize = 6
+batchsize = 4
 
 
 class Lab_Dataset(Dataset):
@@ -96,6 +96,7 @@ train_transforms = transforms.Compose(
 val_transforms = transforms.Compose(
     [
         transforms.ToTensor(),
+        transforms.Resize([512, 512]),
         transforms.Normalize(
             mean=[0.5424, 0.2638, 0.0875],
             std=[0.4982, 0.4407, 0.2826],
