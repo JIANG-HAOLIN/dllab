@@ -16,7 +16,7 @@ import pandas as pd
 
 root_path = "/no_backups/s1422/LAB/labdata/"
 # root_path = os.path.join(r"D:\labdata")
-batchsize = 4
+batchsize = 1
 
 
 class Lab_Dataset(Dataset):
