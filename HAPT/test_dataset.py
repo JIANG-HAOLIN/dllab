@@ -5,11 +5,13 @@ from tqdm import tqdm
 from models.simple_model import model
 from inputpipeline.preprocess_input import preprocess_input
 from evaluation.metrics import compute_accuracy
+import matplotlib
+import matplotlib.pyplot as plt
 
 
 opt = config.read_arguments()
 
-batch_size = 1
+batch_size = 32
 root_path =opt.root_path
 shift_length = opt.shift_length
 window_size = opt.window_size
@@ -21,7 +23,7 @@ bidirectional = opt.bidirectional
 out_name = opt.out_name+'b'+str(batch_size)+'hidden'+str(hidden_size)+'layer'+str(num_layers)
 
 test_loader = get_dataloader(mode='test',Window_shift=125,Window_length=250,
-                                   batch_size=32,shuffle=True,root_path='./RawData/')
+                                   batch_size=batch_size,shuffle=False,root_path='./RawData/')
 
 
 mdl = model(batchsize=32,device=device,hidden_size =12,
@@ -39,13 +41,40 @@ acu = 0
 #     if step <=0 :
 #         print(sample,label)
 accu=0
-for step_test, (test_input, test_label, _, _) in tqdm(enumerate(test_loader)):
+result_dict = {f'{s}': {f'{e}':[] for e in (2*s,2*s+1)} for s in range(22,28)}
+for step_test, (test_input, test_label, file, interval) in tqdm(enumerate(test_loader)):
     with torch.no_grad():
         test_input, test_label = preprocess_input(test_input, test_label, device)
-        test_output = mdl(test_input)
+        for i in range(batch_size):
+            usr = str(int(file[0][i]))
+            exp = str(int(file[1][i]))
+            start = int(interval[0][i])
+            end = int(interval[1][i])
+            result_dict[usr][exp].append([[start,end],test_label])
+            test_output = mdl(test_input)
         loss_val = (loss_val * step_test + loss_computer(test_output, test_label)) / (step_test + 1)  ##??
         # print(val_output,val_label)
         accuracy = compute_accuracy(test_output.detach().cpu().numpy(), test_label.detach().cpu().numpy())  ##??
         # print(accuracy)
         accu = (accu * step_test + accuracy) / (step_test + 1)  ##validation set的平均accuracy
-print(accu)
+
+
+# print(accu)
+# print(result_dict['23']['47'])
+def visualization(usr='22',exp='44'):
+    acc_path = f'/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/RawData/acc_exp{exp}_user{usr}.txt'
+    gyrp_path = f'/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/RawData/acc_exp{exp}_user{usr}.txt'
+    with open(acc_path) as acc:
+        file_acc = acc.readlines()
+    with open(gyrp_path) as gyro:
+        file_gyro = gyro.readlines()
+    float_list = []
+    for line_index in range(len(file_acc)):
+        float_list.append(
+            list(map(float, (file_acc[line_index].split()))) + list(map(float, (file_gyro[line_index].split()))))
+    fig = plt.figure()
+    plt.plot(range(len(float_list)), float_list, label="data")  # plot
+    fig.show()
+
+
+
