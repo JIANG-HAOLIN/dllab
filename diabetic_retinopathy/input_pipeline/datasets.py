@@ -14,9 +14,9 @@ import cv2
 import pandas as pd
 # path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/IDRID_dataset/images/resized_test/IDRiD_001.jpg"
 
-# root_path = "/no_backups/s1434/lab/labdata/"
-root_path = os.path.join(r"D:\labdata")
-
+root_path = "/no_backups/s1422/LAB/labdata/"
+# root_path = os.path.join(r"D:\labdata")
+batchsize = 1
 
 
 class Lab_Dataset(Dataset):
@@ -96,6 +96,7 @@ train_transforms = transforms.Compose(
 val_transforms = transforms.Compose(
     [
         transforms.ToTensor(),
+        transforms.Resize([512, 512]),
         transforms.Normalize(
             mean=[0.5424, 0.2638, 0.0875],
             std=[0.4982, 0.4407, 0.2826],
@@ -129,9 +130,9 @@ train_dataset = Lab_Dataset(root=root_path, train=True, transform=train_transfor
 train_dataset_reg = Lab_Dataset(root=root_path, train=True, transform=train_transforms, reg=True)
 test_dataset = Lab_Dataset(root=root_path, train=False, transform=val_transforms)
 
-train_loader = DataLoader(dataset=train_dataset, batch_size=2, shuffle=True)
-train_loader_reg = DataLoader(dataset=train_dataset_reg, batch_size=2, shuffle=True)
-test_loader = DataLoader(dataset=test_dataset, batch_size=2, shuffle=False)
+train_loader = DataLoader(dataset=train_dataset, batch_size=batchsize, shuffle=True)
+train_loader_reg = DataLoader(dataset=train_dataset_reg, batch_size=batchsize, shuffle=True)
+test_loader = DataLoader(dataset=test_dataset, batch_size=batchsize, shuffle=False)
 
 class Kaggle_Dataset(Dataset):
 
@@ -177,10 +178,10 @@ class Kaggle_Dataset_test(Dataset):
 
 
 kaggle_data = Kaggle_Dataset(root_path, transform=kaggle_transforms)
-kaggle_loader = DataLoader(dataset=kaggle_data, batch_size=2, shuffle=True)
+kaggle_loader = DataLoader(dataset=kaggle_data, batch_size=batchsize, shuffle=True)
 
 kaggle_test_data = Kaggle_Dataset_test(root_path, transform=kaggle_transforms_test)
-kaggle_test_loader = DataLoader(dataset=kaggle_test_data, batch_size=2, shuffle=False)
+kaggle_test_loader = DataLoader(dataset=kaggle_test_data, batch_size=batchsize, shuffle=False)
 #
 
 
