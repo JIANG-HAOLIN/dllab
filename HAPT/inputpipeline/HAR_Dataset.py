@@ -25,15 +25,15 @@ class dataset_HAR(Dataset):
         self.subjects = self.set_dict[mode]
         self.win_len = win_len
         self.shift = shift
-
+        self.samples = []
+        self.labels = []
+        self.file = []
+        self.interval = []
 
         for subject in self.subjects:
             subject_root_path = root_path+'/proband'+str(subject)+'/data/'
             for act,label in self.label_dict.items():### !!!!!
-                self.samples = []
-                self.labels = []
-                self.file = []
-                self.interval = []
+
 
                 acc_folder_path = 'acc_' + act + '_csv/'
                 gyr_folder_path = 'gyr_' + act + '_csv/'
@@ -79,7 +79,7 @@ class dataset_HAR(Dataset):
                 list(map(float, (acc[line_index].split(','))))[2:] + list(map(float, (gyro[line_index].split(','))))[2:])
         # data_array = np.array(float_list)
         data_tensor = torch.Tensor(float_list).view(-1, 1, 6)
-        data_tensor = self.normalize(data_tensor)
+        # data_tensor = self.normalize(data_tensor)
         return data_tensor
 
     def normalize(self,tensor):
@@ -107,16 +107,16 @@ class dataset_HAR(Dataset):
 
 
 
-def get_dataloader(mode='train',Window_shift=125,Window_length=250,batch_size=3,shuffle=True,root_path='/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/realworld2016_dataset/'):
+def get_dataloader_HAR(mode='train',Window_shift=125,Window_length=250,batch_size=3,shuffle=True,root_path='/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/realworld2016_dataset/'):
     dataset =dataset_HAR(mode=mode,shift=125,win_len=250,root_path = root_path)
     return DataLoader(dataset,batch_size=batch_size,shuffle=shuffle,drop_last=True)
 
 ##测试dataset
-train_loader = get_dataloader(mode='train',Window_shift=125,Window_length=250,batch_size=1,shuffle=True)
-for step,data in enumerate(train_loader):##!!!!!!
-    if step <= 0:
-        print(data)
-        print('\n\nsample batch shape:',data[0].shape,'\n',data[0],'\n\n label:',int(data[1]),'\n\n usr index =',int(data[2][0]),'\n\nfile exp index =', data[2][1],
-                '\n\n time interval = ',int(data[3][0]),'-->',int(data[3][1]))
+# train_loader = get_dataloader_HAR(mode='validation',Window_shift=125,Window_length=250,batch_size=1,shuffle=True)
+# for step,data in enumerate(train_loader):##!!!!!!
+#     if step <= 1:
+#         print('\n\nsample batch shape:',data[0].shape,'\n',data[0],'\n\n label:',int(data[1]),'\n\n usr index =',int(data[2][0]),'\n\nfile exp index =', data[2][1],
+#                 '\n\n time interval = ',int(data[3][0]),'-->',int(data[3][1]))
+
 
 

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
-def visualization(usr='22',exp='44',result_dict = None):
+def visualization(usr='23',exp='46',result_dict = None):
     result_dict = np.load(result_dict,allow_pickle=True).item()
     color_dict={0:'red',1:'orange',2:'yellow',3:'greenyellow',4:'springgreen',5:'aquamarine',
                 6:'cyan',7:'skyblue',8:'mediumpurple',9:'violet',10:'magenta',11:'hotpink'}

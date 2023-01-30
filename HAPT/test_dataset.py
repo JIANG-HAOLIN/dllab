@@ -1,8 +1,9 @@
+import numpy as np
 import torch
 from inputpipeline.datasets import get_dataloader
 import config
 from tqdm import tqdm
-from models.simple_model import model
+from models.multi_models import model
 from inputpipeline.preprocess_input import preprocess_input
 from evaluation.metrics import compute_accuracy
 import matplotlib
@@ -11,7 +12,7 @@ import matplotlib.pyplot as plt
 
 opt = config.read_arguments()
 
-batch_size = 32
+batch_size = 1
 root_path =opt.root_path
 shift_length = opt.shift_length
 window_size = opt.window_size
@@ -26,7 +27,7 @@ test_loader = get_dataloader(mode='test',Window_shift=125,Window_length=250,
                                    batch_size=batch_size,shuffle=False,root_path='./RawData/')
 
 
-mdl = model(batchsize=32,device=device,hidden_size =12,
+mdl = model(batchsize=batch_size,device=device,hidden_size =12,
             num_layers=2,bidirectional=True,window_size=250).to(device)
 mdl.load_state_dict(torch.load('bi4b64hidden12layer2best_epoch.pth',map_location=torch.device('cpu')))
 mdl.eval()
@@ -57,24 +58,11 @@ for step_test, (test_input, test_label, file, interval) in tqdm(enumerate(test_l
         accuracy = compute_accuracy(test_output.detach().cpu().numpy(), test_label.detach().cpu().numpy())  ##??
         # print(accuracy)
         accu = (accu * step_test + accuracy) / (step_test + 1)  ##validation set的平均accuracy
+np.save('result_dict.npy',result_dict)
 
+print(accu)
+print(result_dict['23']['47'])
 
-# print(accu)
-# print(result_dict['23']['47'])
-def visualization(usr='22',exp='44'):
-    acc_path = f'/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/RawData/acc_exp{exp}_user{usr}.txt'
-    gyrp_path = f'/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/RawData/acc_exp{exp}_user{usr}.txt'
-    with open(acc_path) as acc:
-        file_acc = acc.readlines()
-    with open(gyrp_path) as gyro:
-        file_gyro = gyro.readlines()
-    float_list = []
-    for line_index in range(len(file_acc)):
-        float_list.append(
-            list(map(float, (file_acc[line_index].split()))) + list(map(float, (file_gyro[line_index].split()))))
-    fig = plt.figure()
-    plt.plot(range(len(float_list)), float_list, label="data")  # plot
-    fig.show()
 
 
 

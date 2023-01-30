@@ -1,7 +1,8 @@
 import torch
-from models.simple_model import model
+from models.multi_models import model_HAPT,model_HAR
 from inputpipeline.datasets import get_dataloader
 from inputpipeline.preprocess_input import preprocess_input
+from inputpipeline.HAR_Dataset import get_dataloader_HAR
 
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -21,16 +22,26 @@ hidden_size = opt.hidden_size
 num_layers = opt.num_layers
 lr = opt.lr
 bidirectional = opt.bidirectional
-out_name = opt.out_name+'b'+str(batch_size)+'hidden'+str(hidden_size)+'layer'+str(num_layers)
+dataset = opt.dataset
+out_name = opt.dataset+opt.out_name+'b'+str(batch_size)+'hidden'+str(hidden_size)+'layer'+str(num_layers)
 
 
 loss_computer = torch.nn.CrossEntropyLoss()
-train_loader = get_dataloader(mode='train',Window_shift=125,Window_length=250,
-                              batch_size=batch_size,shuffle=True,root_path='./RawData/')
-validation_loader = get_dataloader(mode='validation',Window_shift=125,Window_length=250,
-                                   batch_size=batch_size,shuffle=True,root_path='./RawData/')
-mdl = model(batchsize=batch_size,device=device,hidden_size =hidden_size,
-            num_layers=num_layers,bidirectional=bidirectional,window_size=window_size).to(device)
+if dataset == 'HAPT':
+    train_loader = get_dataloader(mode='train',Window_shift=125,Window_length=250,
+                                  batch_size=batch_size,shuffle=True,root_path='./RawData/')
+    validation_loader = get_dataloader(mode='validation',Window_shift=125,Window_length=250,
+                                       batch_size=batch_size,shuffle=True,root_path='./RawData/')
+    mdl = model_HAPT(batchsize=batch_size, device=device, hidden_size=hidden_size,
+                     num_layers=num_layers, bidirectional=bidirectional, window_size=window_size).to(device)
+elif dataset == 'HAR':
+    train_loader = get_dataloader_HAR(mode='train',Window_shift=125,Window_length=250,batch_size=batch_size,
+                                      shuffle=True,root_path='./realworld2016_dataset/')
+    validation_loader = get_dataloader_HAR(mode='validation',Window_shift=125,Window_length=250,batch_size=batch_size,
+                                           shuffle=True,root_path='./realworld2016_dataset/')
+    mdl = model_HAR(batchsize=batch_size, device=device, hidden_size=hidden_size,
+                     num_layers=num_layers, bidirectional=bidirectional, window_size=window_size).to(device)
+
 writer = SummaryWriter("logs")
 opt = torch.optim.Adam(mdl.parameters(),lr=lr,weight_decay=5e-3)
 
