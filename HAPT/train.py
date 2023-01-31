@@ -76,7 +76,7 @@ def train(config=None):
 
 # 超参数搜索方法，可以选择：grid random bayes
 sweep_config = {
-    'method': 'grid',
+    'method': 'bayes',
     'name': 'sweep',
     'metric': {'goal': 'maximize', 'name': 'val_acc'},
     }
