@@ -31,11 +31,11 @@ test_loader = get_dataloader(mode='test',Window_shift=125,Window_length=250,
 # test_loader = get_dataloader_HAR(mode='test', Window_shift=125, Window_length=250, batch_size=batch_size,
 #                                        shuffle=True, root_path='./realworld2016_dataset/')
 
-# file_name = 'bi4b64hidden12layer2best_epoch.pth'
-file_name = 'HAPT_transformer_validation_accuracyb32hidden24layer2best_epoch.pth'
-# mdl = model(batchsize=batch_size,device=device,hidden_size =12,
-#             num_layers=2,bidirectional=True,window_size=250).to(device)
-mdl = model_transformer_HAPT(batchsize=batch_size)
+file_name = 'bi4b64hidden12layer2best_epoch.pth'
+# file_name = 'HAPT_transformer_validation_accuracyb32hidden24layer2best_epoch.pth'
+mdl = model_HAPT(batchsize=batch_size,device=device,hidden_size =12,
+            num_layers=2,bidirectional=True,window_size=250).to(device)
+# mdl = model_transformer_HAPT(batchsize=batch_size)
 mdl.load_state_dict(torch.load(file_name,map_location=torch.device('cpu')))
 mdl.eval()
 
