@@ -85,6 +85,8 @@ def visualization(usr='25',exp='50',result_dict = None,true_dict=None):
         ax[2].axvspan(i*interval, (i+1)*interval, alpha=0.3, color=color,lw=0)
         ls.append((i*interval+(i+1)*interval)/2,)
 
+
+## confusion Matrix for single file
     ax[2].set_xticks(ls,['walking','walking_upstairs','walking_downstairs','sitting','standing','laying',
             'stand_to_sit','sit_to_stand','sit_to_lie','lie_to_sit','stand_to_lie','lie_to_stand'],rotation=15)
     plt.subplots_adjust(hspace=0.4)
@@ -96,9 +98,29 @@ def visualization(usr='25',exp='50',result_dict = None,true_dict=None):
     for i in range(12):
         if i in all_possible_labels:
                 label_list.append(label_dict[i])
-
     # print(label_list)
     pp_matrix_from_data(true_label, result_label,label_list=label_list)
+
+## confusion Matrix for whole test set
+    results = []
+    y_true = []
+    for usr,files in result_dict.items():
+        for file,datas in files.items():
+            for data in datas:
+                results.append(int(data[1]))
+    for usr,files in true_dict.items():
+        for file,datas in files.items():
+            for data in datas:
+                y_true.append(int(data[1]))
+    results = np.array(results)
+    y_true = np.array(y_true)
+    label_list = []
+    all_possible_labels = np.concatenate((results,y_true))
+    for i in range(12):
+            if i in all_possible_labels:
+                    label_list.append(label_dict[i])
+    pp_matrix_from_data(y_true, results,label_list=label_list)
+
 
 
 visualization(result_dict='result_dict.npy',true_dict='true_dict.npy')
