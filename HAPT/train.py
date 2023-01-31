@@ -1,8 +1,11 @@
+import wandb
+import math
 import torch
 from models.multi_models import model_HAPT,model_HAR,model_gru_HAPT,model_transformer_HAPT
 from inputpipeline.datasets import get_dataloader
 from inputpipeline.preprocess_input import preprocess_input
 from inputpipeline.HAR_Dataset import get_dataloader_HAR
+from Trainer import Trainer
 
 
 import matplotlib.pyplot as plt
@@ -13,7 +16,6 @@ import config
 
 
 opt = config.read_arguments()
-
 batch_size = opt.batch_size
 root_path =opt.root_path
 shift_length = opt.shift_length
@@ -26,7 +28,7 @@ bidirectional = opt.bidirectional
 dataset = opt.dataset
 structure = opt.structure
 out_name = opt.dataset+'_'+opt.structure+'_'+opt.out_name+'b'+str(batch_size)+'hidden'+str(hidden_size)+'layer'+str(num_layers)
-
+epoch = opt.epoch
 
 loss_computer = torch.nn.CrossEntropyLoss()
 if dataset == 'HAPT':
@@ -53,65 +55,71 @@ elif dataset == 'HAR':
     elif structure == 'transformer':
         mdl = model_transformer_HAPT(batchsize=batch_size)
 
-writer = SummaryWriter("logs")
-opt = torch.optim.Adam(mdl.parameters(),lr=lr,weight_decay=5e-3)
 
-loss_list=[]
-accu_list=[]
-cur = []
-epoch = 1000
-best_accu = 0
+def train(config=None):
+    with wandb.init(config=None):
+        config = wandb.config
+        print(config)
+        # If called by wandb.agent, as below,
+        # this config will be set by Sweep Controller
+        Trainer(mdl=mdl,
+                loss_computer=loss_computer,
+                optimizer=torch.optim.Adam(mdl.parameters(), lr=config.learning_rate, weight_decay=5e-3),
+                epoch=epoch,
+                learning_rate=2e-4,
+                train_loader=train_loader,
+                validation_loader=validation_loader,
+                out_name=out_name,
+                device=device,
+                batch_size=batch_size,
+                )
+
+# 超参数搜索方法，可以选择：grid random bayes
+sweep_config = {
+    'method': 'grid',
+    'name': 'sweep',
+    'metric': {'goal': 'maximize', 'name': 'val_acc'},
+    }
+
+# 参数范围
+parameters_dict = {
+    # 'num_filter':{
+    #     'values':[3, 4, 5]
+    #     },
+    # 'optimizer': {
+    #     'values': ['adam', 'sgd']
+    #     },
+    # 'dropout': {
+    #       'values': [0.3, 0.4, 0.5]
+    #     },
+    'learning_rate': {
+        # a flat distribution between 0 and 0.1
+        'values':[1e-3,1e-4,1e-5]
+      },
+    'epoch': {
+        'values': [5, 10, 15]
+    },
+    'batch_size': {
+        # integers between 32 and 256
+        # with evenly-distributed logarithms
+        # 'distribution': 'q_log_uniform',
+        # 'q': 1,
+        # 'min': math.log(32),
+        # 'max': math.log(256),
+        'values':[32,64]
+      }
+    }
+
+sweep_config['parameters'] = parameters_dict
+
+sweep_id = wandb.sweep(sweep_config, project="pytorch-sweeps-demo")
+# wandb.init()
+
+if __name__ == '__main__':
+    wandb.agent(sweep_id, train, count=50)
 
 
-for epoch in range(epoch):
-    for step,(input,label,_,_) in enumerate(train_loader):##!!!!!!
-        cur_iter = epoch*(int(2550/batch_size)) + step + 1
-        #input.shape [3,250,6]
-        input,label = preprocess_input(input,label,device)
-        output = mdl(input)
-        loss = loss_computer(output,label)
-        opt.zero_grad()
-        loss.backward()##not backwards....
-        opt.step()
 
-        if cur_iter % 10 == 0:
-            writer.add_scalar("train loss", loss.item(), cur_iter)
-            cur.append(cur_iter)
-            mdl.eval()
-            accu = 0
-            loss_val = 0
 
-            for step_val,(val_input,val_label,_,_) in enumerate(validation_loader):
-                with torch.no_grad():
-                    val_input, val_label = preprocess_input(val_input, val_label, device)
-                    val_output = mdl(val_input)
-                    loss_val = (loss_val * step_val + loss_computer(val_output, val_label)) / (step_val + 1)##??
-                    # print(val_output,val_label)
-                    accuracy = compute_accuracy(val_output.detach().cpu().numpy(), val_label.detach().cpu().numpy())##??
-                    # print(accuracy)
-                    accu = (accu * step_val + accuracy) / (step_val + 1)##validation set的平均accuracy
-
-            mdl.train()
-            loss_list.append(loss_val.item())
-            accu_list.append(accu)##??
-            writer.add_scalar("validation loss", loss_val.item(), cur_iter)
-            writer.add_scalar("validation accuracy", accu, cur_iter)
-
-            if accu > best_accu:
-                best_accu = accu
-                print(f'at epoch{epoch} has best validation accuracy:',best_accu)
-                torch.save(mdl.state_dict(), out_name+"best_epoch.pth")
-
-            fig = plt.figure()
-            plt.plot(cur, loss_list, label="val_loss")  # plot example
-            plt.legend()
-            fig.savefig(f'{out_name}_val_loss.png')
-
-            fig2 = plt.figure()
-            plt.plot(cur, accu_list, label="accuracy")  # plot example
-            plt.legend()
-            fig2.savefig(f'{out_name}_val_accuracy.png')
-
-    writer.close()
 
 
