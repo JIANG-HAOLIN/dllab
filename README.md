@@ -42,3 +42,5 @@ Simple diabetic retinopathy classification model:                    71% accurac
 Transferred diabetic retinopathy classification model from efficientnet b3:   87% accuracy on labdata test set,   37% accuracy on Kaggle test set
 
 Mean teacher model:              88% accuracy on labdata test set,   80% accuracy on Kaggle test set
+
+HAPT:  96% accuracy on HAPT test set
