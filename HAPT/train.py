@@ -107,7 +107,17 @@ parameters_dict = {
         # 'min': math.log(32),
         # 'max': math.log(256),
         'values':[32,64]
-      }
+      },
+    'hidden_size': {
+        'values': [12, 18, 24]
+    },
+    'num_layers': {
+        'values': [1, 2, 3]
+    },
+    'windows_size': {
+        'values': [150,200,250]
+    },
+
     }
 
 sweep_config['parameters'] = parameters_dict
