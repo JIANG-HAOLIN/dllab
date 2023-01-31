@@ -24,11 +24,15 @@ Please contact Haolin for permission before downloading the dataset from his goo
 
 
 
+# How to run
+
+For the simple model diabetic retinopathy expriment, run simple_diabetic branch/diabetic_retinopathy/train.py
+
+For the mean teacher experiment, run master/diabetic_retinopathy/mean_teacher.py
+
+For the HAPT experiment, run
 
 
-
-# How to run the code
-to do
 
 # Results
 to do
