@@ -15,7 +15,7 @@ def add_all_arguments(parser):
     parser.add_argument('--window_size', type=int, default=250)
     parser.add_argument('--num_layers', type=int, default=2)
     parser.add_argument('--lr', type=float, default=1e-4)
-
+    parser.add_argument('--epoch', type=int, default=200)
     parser.add_argument('--shift_length', type=int, default=125)
     parser.add_argument('--hidden_size', type=int, default=24)
     parser.add_argument('--batch_size', type=int, default=32, help='input batch size')

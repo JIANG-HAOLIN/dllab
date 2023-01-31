@@ -11,7 +11,6 @@ import os
 from inputpipeline.preprocessing import preprocessing
 
 
-# data_root_path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/HAPT Data Set/RawData/"
 
 
 ##training dataset共2550, validation dataset共423
@@ -106,12 +105,14 @@ class creat_Dataset(Dataset):
 
 def get_dataloader(mode='train',Window_shift=125,Window_length=250,batch_size=3,shuffle=True,root_path='./RawData/'):
     dataset = creat_Dataset(mode=mode,Window_shift=125,Window_length=250,batchsize=batch_size,data_root_path = root_path)
+    # total_samples = dataset.__len__()
     return DataLoader(dataset,batch_size=batch_size,shuffle=shuffle,drop_last=True)
 
 
 
 ##测试dataset
-# train_loader = get_dataloader(mode='train',Window_shift=125,Window_length=250,batch_size=1,shuffle=True)
+# data_root_path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/HAPT Data Set/RawData/"
+# train_loader = get_dataloader(mode='train',Window_shift=125,Window_length=250,batch_size=1,shuffle=True,root_path=data_root_path)
 # for step,data in enumerate(train_loader):##!!!!!!
 #     if step <= 0:
 #         print('\n\nsample batch shape:',data[0].shape,'\n',data[0],'\n\n label:',data[1],'\n\n usr index =',int(data[2][0]),'\n\nfile exp index =', int(data[2][1]),\
