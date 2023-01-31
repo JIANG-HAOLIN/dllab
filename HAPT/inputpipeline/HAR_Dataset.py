@@ -19,6 +19,7 @@ root_path ='/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/rea
 class dataset_HAR(Dataset):
     def __init__(self,mode='train',position='chest',root_path=root_path,win_len=250,shift=125):
         super(dataset_HAR,self).__init__()
+        print(f'{mode} '+'dataset:HAR'+',position:'+f'{position}')
         self.set_dict = {'train':[1,2,5,8,11,12,13,15],'validation':[3],'test':[9,10]}
         self.label_dict = {'climbingdown':1,'climbingup':2,'jumping':3,'lying':4,
                            'running':5,'sitting':6,'standing':7,'walking':8}

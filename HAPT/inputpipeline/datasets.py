@@ -17,6 +17,7 @@ from inputpipeline.preprocessing import preprocessing
 ##training dataset共2550, validation dataset共423
 class creat_Dataset(Dataset):
     def __init__(self,mode='train',Window_shift=125,Window_length=250,batchsize=32,data_root_path = './RawData/'):
+        print(f'{mode} '+'dataset:HAPT')
         super(creat_Dataset,self).__init__()
         self.mode = mode
         if mode == 'train':
@@ -55,8 +56,9 @@ class creat_Dataset(Dataset):
                             self.file.append((usr_idx,exp_idx))
                             self.interval.append((window_start,window_start+self.win_len))
                     else :
-                        print(f'sequence {start}--{end}(sequence length{sequence_length}) from file exp{exp_idx} can\'t form a window length of {self.win_len}!')
-        print('\n\nin total %d sequences' % len(self.samples),'window length  %d samples' % self.samples[0].shape[1])
+                        # print(f'sequence {start}--{end}(sequence length{sequence_length}) from file exp{exp_idx} can\'t form a window length of {self.win_len}!')
+                        pass
+        # print('\n\nin total %d sequences' % len(self.samples),'window length  %d samples' % self.samples[0].shape[1])
         self.samples = torch.cat(self.samples,dim=0)#####！！若由list变tensor必须具有单一维度！！
 
 
