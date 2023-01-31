@@ -26,13 +26,19 @@ Please contact Haolin for permission before downloading the dataset from his goo
 
 # How to run
 
+Put the downloaded datasets in ./Labdata.
+
 For the simple model diabetic retinopathy expriment, run simple_diabetic branch/diabetic_retinopathy/train.py
 
 For the mean teacher experiment, run master/diabetic_retinopathy/mean_teacher.py
 
-For the HAPT experiment, run
+For the HAPT experiment, run  master/HAPT/train.py
 
 
 
 # Results
-to do
+Simple diabetic retinopathy classification model:                    71% accuracy on labdata test set,   27% accuracy on Kaggle test set                         
+
+Transferred diabetic retinopathy classification model from efficientnet b3:   87% accuracy on labdata test set,   37% accuracy on Kaggle test set
+
+Mean teacher model:              88% accuracy on labdata test set,   80% accuracy on Kaggle test set
