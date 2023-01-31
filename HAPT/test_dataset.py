@@ -12,6 +12,9 @@ from evaluation.metrics import compute_accuracy
 import matplotlib
 import matplotlib.pyplot as plt
 
+from evaluation.confusion_matrix import pp_matrix_from_data
+
+
 
 opt = config.read_arguments()
 
@@ -72,8 +75,31 @@ np.save('result_dict.npy',result_dict)
 np.save('true_dict.npy',true_dict)
 
 
+
+# label_dict = {0: 'walking', 1: 'walking_upstairs', 2: 'walking_downstairs', 3: 'sitting', 4: 'standing', 5: 'laying',
+#               6: 'stand_to_sit', 7: 'sit_to_stand', 8: 'sit_to_lie', 9: 'lie_to_sit', 10: 'stand_to_lie',
+#               11: 'lie_to_stand'}
+# results =[]
+# y_true = []
+# for usr,files in result_dict.items():
+#     for file,data in files.items():
+#         results.append(int(data[1]))
+# for usr,files in true_dict.items():
+#     for file,data in files.items():
+#         y_true.append(int(data[1]))
+# results = np.array(results)
+# y_true = np.array(y_true)
+# label_list = []
+# all_possible_labels = np.concatenate((results,y_true))
+# for i in range(12):
+#         if i in all_possible_labels:
+#                 label_list.append(label_dict[i])
+# pp_matrix_from_data(y_true, results,label_list=label_list)
+
+
 print(accu)
-print(result_dict['23']['47'])
+
+# print(result_dict['23']['47'])
 
 
 
