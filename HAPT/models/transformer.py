@@ -108,22 +108,3 @@ class transformer_encoder(nn.Module):
         x = self.to_latent(x)
         return self.linear_head(x)
 
-
-
-# if __name__ == '__main__':
-#
-#     v = transformer_encoder(
-#         seq_len = 250,
-#         patch_size = 10,
-#         num_classes = 12,
-#         dim = 512,
-#         depth = 6,
-#         heads = 8,
-#         mlp_dim = 1024,
-#         channels = 6,
-#         dim_head = 64
-#     )
-#
-#     time_series = torch.randn(32, 6, 250)
-#     logits = v(time_series) # (4, 1000)
-#     print(logits.shape)
