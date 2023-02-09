@@ -36,7 +36,9 @@ For the HAPT experiment, run  master/HAPT/train.py
 
 # checkpoints
 
-For ensemble learning, please place the saved checkpoints in the folder and define the folder path in ensemble.py.
+For ensemble learning, please place the saved checkpoints in the folder and define the folder path in dl-lab-22w-team15/diabetic_retinopathy/evaluation/ensemble.py.
+
+
 If you need the pretrained model, please ask Haolin for help.
 
 
