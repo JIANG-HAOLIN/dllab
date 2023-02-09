@@ -2,6 +2,7 @@ import wandb
 import math
 import torch
 from models.multi_models import model_HAPT,model_HAR,model_gru_HAPT,model_transformer_HAPT
+from models.conv_lstm import Conv_lstm
 from inputpipeline.datasets import get_dataloader
 from inputpipeline.preprocess_input import preprocess_input
 from inputpipeline.HAR_Dataset import get_dataloader_HAR
@@ -44,6 +45,8 @@ if dataset == 'HAPT':
                          num_layers=num_layers, bidirectional=bidirectional, window_size=window_size).to(device)
     elif structure == 'transformer':
         mdl = model_transformer_HAPT(batchsize=batch_size)
+    elif structure == 'Conv_lstm':
+        mdl = Conv_lstm(device=device,num_lstm_layers=2,hidden_size=48,batch_size=32)
 elif dataset == 'HAR':
     train_loader = get_dataloader_HAR(mode='train',Window_shift=125,Window_length=250,batch_size=batch_size,
                                       shuffle=True,root_path='./realworld2016_dataset/')
@@ -64,7 +67,8 @@ def train(config=None):
         # this config will be set by Sweep Controller
         Trainer(mdl=mdl,
                 loss_computer=loss_computer,
-                optimizer=torch.optim.Adam(mdl.parameters(), lr=config.learning_rate, weight_decay=5e-3),
+                # optimizer=torch.optim.Adam(mdl.parameters(), lr=config.learning_rate, weight_decay=5e-3),
+                optimizer=torch.optim.Adam(mdl.parameters(), lr=lr, weight_decay=5e-3),
                 epoch=epoch,
                 learning_rate=2e-4,
                 train_loader=train_loader,
@@ -126,8 +130,8 @@ sweep_id = wandb.sweep(sweep_config, project="pytorch-sweeps-demo")
 # wandb.init()
 
 if __name__ == '__main__':
-    wandb.agent(sweep_id, train, count=50)
-
+    # wandb.agent(sweep_id, train, count=50)
+    train()
 
 
 

@@ -6,10 +6,9 @@ from matplotlib.collections import QuadMesh
 
 
 def get_new_fig(fn, figsize=[9, 9]):
-    """Init graphics"""
     fig1 = plt.figure(fn, figsize)
-    ax1 = fig1.gca()  # Get Current Axis
-    ax1.cla()  # clear existing plot
+    ax1 = fig1.gca()
+    ax1.cla()
     return fig1, ax1
 
 
@@ -17,8 +16,6 @@ def configcell_text_and_colors(
     array_df, lin, col, oText, facecolors, posi, fz, fmt, show_null_values=0
 ):
     """
-    config cell text and colors
-    and return text elements to add and to dell
     @TODO: use fmt
     """
     text_add = []
@@ -29,9 +26,7 @@ def configcell_text_and_colors(
     curr_column = array_df[:, col]
     ccl = len(curr_column)
 
-    # last line  and/or last column
     if (col == (ccl - 1)) or (lin == (ccl - 1)):
-        # tots and percents
         if cell_val != 0:
             if (col == ccl - 1) and (lin == ccl - 1):
                 tot_rig = 0
@@ -50,10 +45,8 @@ def configcell_text_and_colors(
 
         per_ok_s = ["%.2f%%" % (per_ok), "100%"][per_ok == 100]
 
-        # text to DEL
         text_del.append(oText)
 
-        # text to ADD
         font_prop = fm.FontProperties(weight="bold", size=fz)
         text_kwargs = dict(
             color="w",
@@ -84,7 +77,6 @@ def configcell_text_and_colors(
             )
             text_add.append(newText)
 
-        # set background color for sum cells (last line and last column)
         carr = [0.27, 0.30, 0.27, 1.0]
         if (col == ccl - 1) and (lin == ccl - 1):
             carr = [0.17, 0.20, 0.17, 1.0]
@@ -102,11 +94,8 @@ def configcell_text_and_colors(
                 txt = "0\n0.0%"
         oText.set_text(txt)
 
-        # main diagonal
         if col == lin:
-            # set color of the textin the diagonal to white
             oText.set_color("w")
-            # set background color in the diagonal to blue
             facecolors[posi] = [0.35, 0.8, 0.55, 1.0]
         else:
             oText.set_color("r")
@@ -115,7 +104,6 @@ def configcell_text_and_colors(
 
 
 def insert_totals(df_cm):
-    """insert total column and line (the last ones)"""
     sum_col = []
     for c in df_cm.columns:
         sum_col.append(df_cm[c].sum())
@@ -140,18 +128,7 @@ def pp_matrix(
     pred_val_axis="y",
     label_list = None
 ):
-    """
-    print conf matrix with default layout (like matlab)
-    params:
-      df_cm          dataframe (pandas) without totals
-      annot          print text in each cell
-      cmap           Oranges,Oranges_r,YlGnBu,Blues,RdBu, ... see:
-      fz             fontsize
-      lw             linewidth
-      pred_val_axis  where to show the prediction values (x or y axis)
-                      'col' or 'x': show predicted values in columns (x axis) instead lines
-                      'lin' or 'y': show predicted values in lines   (y axis)
-    """
+
     if pred_val_axis in ("col", "x"):
         xlbl = "Predicted"
         ylbl = "Actual"
@@ -160,10 +137,8 @@ def pp_matrix(
         ylbl = "Predicted"
         df_cm = df_cm.T
 
-    # create "Total" column
     insert_totals(df_cm)
 
-    # this is for print allways in the same window
     fig, ax1 = get_new_fig("Conf matrix default", figsize)
 
     ax = sn.heatmap(
@@ -184,10 +159,7 @@ def pp_matrix(
                      rotation=45)
     ax.set_yticks(np.linspace(0.5,len(label_list)-0.5,len(label_list)), label_list,
                      rotation=25)
-    # ax.set_xticklabels(ax.get_xticklabels(), rotation=45, fontsize=10)
-    # ax.set_yticklabels(ax.get_yticklabels(), rotation=25, fontsize=10)
 
-    # Turn off all the ticks
     for t in ax.xaxis.get_major_ticks():
         t.tick1On = False
         t.tick2On = False
@@ -195,11 +167,9 @@ def pp_matrix(
         t.tick1On = False
         t.tick2On = False
 
-    # face colors list
     quadmesh = ax.findobj(QuadMesh)[0]
     facecolors = quadmesh.get_facecolors()
 
-    # iter in text elements
     array_df = np.array(df_cm.to_records(index=False).tolist())
     text_add = []
     text_del = []
@@ -248,14 +218,10 @@ def pp_matrix_from_data(
     pred_val_axis="lin",
     label_list = None
 ):
-    """
-    plot confusion matrix function with y_test (actual values) and predictions (predic),
-    whitout a confusion matrix yet
-    """
+
     from pandas import DataFrame
     from sklearn.metrics import confusion_matrix
 
-    # data
     if not columns:
         from string import ascii_uppercase
 
