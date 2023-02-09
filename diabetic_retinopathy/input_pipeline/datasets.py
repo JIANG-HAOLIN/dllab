@@ -14,8 +14,8 @@ import cv2
 import pandas as pd
 # path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/IDRID_dataset/images/resized_test/IDRiD_001.jpg"
 
-root_path = "/no_backups/s1422/LAB/labdata/"
-# root_path = os.path.join(r"D:\labdata")
+
+root_path = os.path.join(r"D:\labdata")
 batchsize = 1
 
 
