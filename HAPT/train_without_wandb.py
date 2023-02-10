@@ -1,4 +1,3 @@
-import wandb
 import math
 import torch
 from models.multi_models import *
@@ -73,77 +72,22 @@ elif dataset == 'HAR':
 
 
 def train(config=None):
-    with wandb.init(config=None):
-        config = wandb.config
-        print(config)
-        # If called by wandb.agent, as below,
-        # this config will be set by Sweep Controller
-        Trainer(mdl=mdl,
-                loss_computer=loss_computer,
-                # optimizer=torch.optim.Adam(mdl.parameters(), lr=config.learning_rate, weight_decay=5e-3),
-                optimizer=torch.optim.Adam(mdl.parameters(), lr=lr, weight_decay=5e-3),
-                epoch=epoch,
-                learning_rate=2e-4,
-                train_loader=train_loader,
-                validation_loader=validation_loader,
-                out_name=out_name,
-                device=device,
-                batch_size=batch_size,
-                )
-
-# 超参数搜索方法，可以选择：grid random bayes
-sweep_config = {
-    'method': 'bayes',
-    'name': 'sweep',
-    'metric': {'goal': 'maximize', 'name': 'val_acc'},
-    }
-
-# 参数范围
-parameters_dict = {
-    # 'num_filter':{
-    #     'values':[3, 4, 5]
-    #     },
-    # 'optimizer': {
-    #     'values': ['adam', 'sgd']
-    #     },
-    # 'dropout': {
-    #       'values': [0.3, 0.4, 0.5]
-    #     },
-    'learning_rate': {
-        # a flat distribution between 0 and 0.1
-        'values':[1e-3,1e-4,1e-5]
-      },
-    'epoch': {
-        'values': [5, 10, 15]
-    },
-    'batch_size': {
-        # integers between 32 and 256
-        # with evenly-distributed logarithms
-        # 'distribution': 'q_log_uniform',
-        # 'q': 1,
-        # 'min': math.log(32),
-        # 'max': math.log(256),
-        'values':[32,64]
-      },
-    'hidden_size': {
-        'values': [12, 18, 24]
-    },
-    'num_layers': {
-        'values': [1, 2, 3]
-    },
-    'windows_size': {
-        'values': [150,200,250]
-    },
-
-    }
-
-sweep_config['parameters'] = parameters_dict
-
-sweep_id = wandb.sweep(sweep_config, project="pytorch-sweeps-demo")
-# wandb.init()
+    Trainer(mdl=mdl,
+            loss_computer=loss_computer,
+            # optimizer=torch.optim.Adam(mdl.parameters(), lr=config.learning_rate, weight_decay=5e-3),
+            optimizer=torch.optim.Adam(mdl.parameters(), lr=lr, weight_decay=5e-3),
+            epoch=epoch,
+            learning_rate=2e-4,
+            train_loader=train_loader,
+            validation_loader=validation_loader,
+            out_name=out_name,
+            device=device,
+            batch_size=batch_size,
+            how = how,
+            wandb_control=False
+            )
 
 if __name__ == '__main__':
-    # wandb.agent(sweep_id, train, count=50)
     train()
 
 

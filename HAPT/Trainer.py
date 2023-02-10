@@ -22,7 +22,9 @@ def Trainer(mdl = None,
             validation_loader = None,
             out_name = None,
             device = None,
-            batch_size = None
+            batch_size = None,
+            how = 's2s',
+            wandb_control = False
                         ):
     writer = SummaryWriter("logs")
     loss_list=[]
@@ -31,12 +33,14 @@ def Trainer(mdl = None,
     best_accu = 0
     cur_iter = 0
     for epoch in range(epoch):
-        for step,(input,label,_,_) in enumerate(train_loader):##!!!!!!
+        for step,train_data in enumerate(train_loader):##!!!!!!
             # cur_iter = epoch*(int(2550/batch_size)) + step + 1
+            input = train_data[0]
+            label = train_data[1].view(-1)
             cur_iter += 1
             #input.shape [3,250,6]
             input,label = preprocess_input(input,label,device)
-            output = mdl(input)
+            output = mdl(input).view(-1,12)
             loss = loss_computer(output,label)
 
     ##### wandb
@@ -57,10 +61,12 @@ def Trainer(mdl = None,
                 accu = 0
                 loss_val = 0
 
-                for step_val,(val_input,val_label,_,_) in enumerate(validation_loader):
+                for step_val,val_data in enumerate(validation_loader):
                     with torch.no_grad():
+                        val_input = val_data[0]
+                        val_label = val_data[1].view(-1)
                         val_input, val_label = preprocess_input(val_input, val_label, device)
-                        val_output = mdl(val_input)
+                        val_output = mdl(val_input).view(-1,12)
                         loss_val = (loss_val * step_val + loss_computer(val_output, val_label)) / (step_val + 1)##??
                         # print(val_output,val_label)
                         accuracy = compute_accuracy(val_output.detach().cpu().numpy(), val_label.detach().cpu().numpy())##??
@@ -69,21 +75,25 @@ def Trainer(mdl = None,
 
                 mdl.train()
                 loss_list.append(loss_val.item())
-                accu_list.append(accu)##??
+                accu_list.append(accu)
                 writer.add_scalar("validation loss", loss_val.item(), cur_iter)
                 writer.add_scalar("validation accuracy", accu, cur_iter)
 
-                wandb.log({
-                    'epoch': epoch,
-                    'train_loss': loss,
-                    'val_acc': accu,
-                    'val_loss': loss_val
-                })
+                if wandb_control:
+                    wandb.log({
+                        'epoch': epoch,
+                        'train_loss': loss,
+                        'val_acc': accu,
+                        'val_loss': loss_val
+                    })
 
                 if accu > best_accu:
                     best_accu = accu
                     print(f'at epoch{epoch} has best validation accuracy:',best_accu)
                     torch.save(mdl.state_dict(), out_name+"best_epoch.pth")
+                    if best_accu >= 0.8:
+                        torch.save(mdl.state_dict(),'pth'+ out_name + f'_{int(100*best_accu)}_'+f'{cur_iter}_'+'.pth')
+
 
                 fig = plt.figure()
                 plt.plot(cur, loss_list, label="val_loss")  # plot example
@@ -92,6 +102,7 @@ def Trainer(mdl = None,
 
                 fig2 = plt.figure()
                 plt.plot(cur, accu_list, label="accuracy")  # plot example
+                plt.title(f'best accuracy:{best_accu} at iter{cur_iter}')
                 plt.legend()
                 fig2.savefig(f'{out_name}_val_accuracy.png')
 
