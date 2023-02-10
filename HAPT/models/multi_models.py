@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from inputpipeline import datasets
-from models.transformer import Encoder
+from HAPT.inputpipeline import datasets
+from HAPT.models.transformer import Encoder
 
 
 

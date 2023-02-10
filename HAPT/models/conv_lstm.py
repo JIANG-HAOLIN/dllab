@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from inputpipeline import datasets
-from models.transformer import transformer_encoder
+from HAPT.inputpipeline import datasets
+from HAPT.models.transformer import Encoder
 
 class Conv_lstm(nn.Module):
     def __init__(self,device='cpu',num_lstm_layers=2,hidden_size=48,batch_size=32):

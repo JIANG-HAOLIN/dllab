@@ -21,7 +21,7 @@ def add_all_arguments(parser):
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size')
     parser.add_argument('--out_name', type=str, default='validation_accuracy', help='result png name')
     parser.add_argument('--continue', default=False, action='store_true', help="continue train from best epoch")
-    parser.add_argument('--root_path', default='./RawData/',type=str)
+    parser.add_argument('--root_path', default='./',type=str)
     parser.add_argument('--device', default='cpu',type=str)
     parser.add_argument('--bidirectional', default=False,action='store_true')
     parser.add_argument('--dataset',type=str,default='HAPT')

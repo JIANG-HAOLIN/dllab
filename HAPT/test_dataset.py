@@ -38,7 +38,7 @@ out_name = opt.out_name+'b'+str(batch_size)+'hidden'+str(hidden_size)+'layer'+st
 
 how = 's2s'
 test_loader = get_dataloader(mode='test',Window_shift=125,Window_length=250,
-                                   batch_size=batch_size,shuffle=False,root_path='./RawData/',how=how)
+                                   batch_size=batch_size,shuffle=False,root_path='HAPT/RawData/',how=how)
 file_name = 'HAPT_lstm_s2sb64hidden12layer2best_epoch.pth'
 # file_name = 'HAPT_transformer_validation_accuracyb32hidden24layer2best_epoch.pth'
 mdl = model_HAPT(batchsize=batch_size,device=device,hidden_size =12,

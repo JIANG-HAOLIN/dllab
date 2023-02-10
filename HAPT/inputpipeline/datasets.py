@@ -8,12 +8,12 @@ import csv
 import matplotlib.pyplot as plt
 import PIL.Image as Image
 import os
-from inputpipeline.preprocessing import preprocessing
+from HAPT.inputpipeline.preprocessing import preprocessing
 
 
 ##training dataset共2550, validation dataset共423
 class creat_Dataset(Dataset):
-    def __init__(self, mode='train', Window_shift=125, Window_length=250, batchsize=32, data_root_path='./RawData/'):
+    def __init__(self, mode='train', Window_shift=125, Window_length=250, batchsize=32, data_root_path='HAPT/RawData/'):
         print(f'{mode} ' + 'dataset:HAPT','mode:s2l')
         super(creat_Dataset, self).__init__()
         self.mode = mode
@@ -96,7 +96,7 @@ class creat_Dataset(Dataset):
 
 
 class creat_Dataset_s2s(Dataset):
-    def __init__(self, mode='train', Window_shift=125, Window_length=250, batchsize=32, data_root_path='./RawData/'):
+    def __init__(self, mode='train', Window_shift=125, Window_length=250, batchsize=32, data_root_path='dl-lab-22w-team15/HAPT/RawData/'):
         print(f'{mode} ' + 'dataset:HAPT','mode:s2s')
         super(creat_Dataset_s2s, self).__init__()
         self.mode = mode
@@ -192,7 +192,7 @@ class creat_Dataset_s2s(Dataset):
 # validation_loader = DataLoader(validation_dataset,batch_size=3,shuffle=True)
 
 def get_dataloader(how='s2l', mode='train', Window_shift=125, Window_length=250, batch_size=3, shuffle=True,
-                   root_path='./RawData/'):
+                   root_path='HAPT/RawData/'):
     if how == 's2l':
         dataset = creat_Dataset(mode=mode, Window_shift=125, Window_length=250, batchsize=batch_size,
                                 data_root_path=root_path)

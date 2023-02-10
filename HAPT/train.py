@@ -36,14 +36,14 @@ loss_computer = torch.nn.CrossEntropyLoss()
 if dataset == 'HAPT':
     if opt.inputpipeline == 's2l':
         train_loader = get_dataloader(how='s2l',mode='train',Window_shift=shift_length,Window_length=window_size,
-                                      batch_size=batch_size,shuffle=True,root_path='./RawData/')
+                                      batch_size=batch_size,shuffle=True,root_path=root_path+'/RawData/')
         validation_loader = get_dataloader(how='s2l',mode='val',Window_shift=shift_length,Window_length=window_size,
-                                           batch_size=batch_size,shuffle=True,root_path='./RawData/')
+                                           batch_size=batch_size,shuffle=True,root_path=root_path+'/RawData/')
     elif opt.inputpipeline == 's2s':
         train_loader = get_dataloader(how='s2s',mode='train',Window_shift=shift_length,Window_length=window_size,
-                                      batch_size=batch_size,shuffle=True,root_path='./RawData/')
+                                      batch_size=batch_size,shuffle=True,root_path=root_path+'/RawData/')
         validation_loader = get_dataloader(how='s2s',mode='val',Window_shift=shift_length,Window_length=window_size,
-                                           batch_size=batch_size,shuffle=True,root_path='./RawData/')
+                                           batch_size=batch_size,shuffle=True,root_path=root_path+'/RawData/')
 
     if structure == 'lstm':
         mdl = model_HAPT(batchsize=batch_size, device=device, hidden_size=hidden_size,
@@ -57,9 +57,9 @@ if dataset == 'HAPT':
         mdl = Conv_lstm(device=device,num_lstm_layers=num_layers,hidden_size=48,batch_size=batch_size)
 elif dataset == 'HAR':
     train_loader = get_dataloader_HAR(mode='train',Window_shift=shift_length,Window_length=window_size,batch_size=batch_size,
-                                      shuffle=True,root_path='./realworld2016_dataset/')
+                                      shuffle=True,root_path=root_path+'/realworld2016_dataset/')
     validation_loader = get_dataloader_HAR(mode='validation',Window_shift=shift_length,Window_length=window_size,batch_size=batch_size,
-                                           shuffle=True,root_path='./realworld2016_dataset/')
+                                           shuffle=True,root_path=root_path+'/realworld2016_dataset/')
     if structure == 'lstm':
         mdl = model_HAR(batchsize=batch_size, device=device, hidden_size=hidden_size,
                          num_layers=num_layers, bidirectional=bidirectional, window_size=window_size).to(device)
