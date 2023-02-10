@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from evaluation.confusion_matrix import pp_matrix_from_data
+from evaluation.confusion_matrix import generate_confusion_Matrix
+
 
 def visualization(usr='25',exp='50',result_dict = None,true_dict=None):
     result_dict = np.load(result_dict,allow_pickle=True).item()
@@ -99,7 +100,7 @@ def visualization(usr='25',exp='50',result_dict = None,true_dict=None):
         if i in all_possible_labels:
                 label_list.append(label_dict[i])
     # print(label_list)
-    pp_matrix_from_data(true_label, result_label,label_list=label_list)
+    generate_confusion_Matrix(true_label, result_label,label_list=label_list)
 
 ## confusion Matrix for whole test set
     results = []
@@ -119,7 +120,7 @@ def visualization(usr='25',exp='50',result_dict = None,true_dict=None):
     for i in range(12):
             if i in all_possible_labels:
                     label_list.append(label_dict[i])
-    pp_matrix_from_data(y_true, results,label_list=label_list)
+    generate_confusion_Matrix(y_true, results,label_list=label_list)
 
 
 
