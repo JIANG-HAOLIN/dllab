@@ -34,12 +34,19 @@ For the mean teacher experiment, run master/diabetic_retinopathy/mean_teacher.py
 
 For the HAPT experiment, run  master/HAPT/train.py
 
+# checkpoints
+
+For ensemble learning, please place the saved checkpoints in the folder and define the folder path in dl-lab-22w-team15/diabetic_retinopathy/evaluation/ensemble.py.
+
+
+If you need the pretrained model, please ask Haolin for help.
+
 
 
 # Results
 Simple diabetic retinopathy classification model:                    71% accuracy on labdata test set,   27% accuracy on Kaggle test set                         
 
-Transferred diabetic retinopathy classification model from efficientnet b3:   87% accuracy on labdata test set,   37% accuracy on Kaggle test set
+Transferred diabetic retinopathy classification model from efficientnet b7:   89% accuracy on labdata test set,   37% accuracy on Kaggle test set
 
 Mean teacher model:              88% accuracy on labdata test set,   80% accuracy on Kaggle test set
 
