@@ -36,7 +36,7 @@ For the HAPT experiment, run  master/HAPT/train.py
 
 # About batchsize
 
-Our experiment results are heavily affected by the batchsize. The larger, the better. You can change the default batchsize in config.py.
+Our diabetic retinopathy classification experiment results are heavily affected by the batchsize. The larger, the better. You can change the default batchsize in diabetic_retinopathy/config.py.
 
 # Checkpoints
 
