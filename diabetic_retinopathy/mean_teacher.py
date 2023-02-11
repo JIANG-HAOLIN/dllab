@@ -12,20 +12,16 @@ from utils import losses, ramps
 from config import read_arguments
 
 opt = read_arguments()
-reg = opt.regression
 ema = opt.EMA
 writer = SummaryWriter("logs")
 device = opt.device
 
 
-if not reg:
-    loss_fc = nn.CrossEntropyLoss()
-    mdl = get_efficient_model(pretrained=True).to(device)
-    train_loader = train_loader
-else:
-    loss_fc = nn.MSELoss()
-    mdl = get_efficient_model(ema=False, reg=True).to(device)
-    train_loader = train_loader_reg
+
+loss_fc = nn.CrossEntropyLoss()
+mdl = get_efficient_model(pretrained=True).to(device)
+train_loader = train_loader
+
 
 if ema:
     ema_mdl = get_efficient_model(ema=True, reg=False, pretrained=True).to(device)
@@ -123,9 +119,6 @@ for cur_iter, rd in enumerate(range(round)):
                 img = img.to(device)
                 y = ema_mdl(img)[0]
                 # y = y.squeeze(1)
-                if reg:
-                    y[(y >= 0.4)] = 1
-                    y[(y < 0.4)] = 0
                 label = label.to(torch.long).to(device)
                 loss_val = (loss_val*idx2+loss_fc(y, label))/(idx2+1)
                 _, accuracy = compute_matrix_CE(y.detach().cpu().numpy(), label.detach().cpu().numpy())
