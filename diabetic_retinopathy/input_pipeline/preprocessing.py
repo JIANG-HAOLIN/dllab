@@ -9,8 +9,8 @@ from torchvision.utils import save_image
 
 
 h, w = 712, 1072
-path = os.path.join(r"C:\Users\guodi\Downloads\idrid\IDRID_dataset\images\train\IDRiD_001.jpg")
-output = os.path.join(r"C:\Users\guodi\Downloads\newimg.jpg")
+path = os.path.join(r"C:\Users\guodiandian\Downloads\idrid\IDRID_dataset\images\train\IDRiD_001.jpg")
+output = os.path.join(r"C:\Users\guodiandian\Downloads\newimg.jpg")
 
 
 img = Image.open(path)

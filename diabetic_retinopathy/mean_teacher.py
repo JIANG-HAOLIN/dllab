@@ -9,11 +9,13 @@ import matplotlib.pyplot as plt
 from evaluation.metrics import compute_matrix, compute_matrix_CE
 from torch.utils.tensorboard import SummaryWriter
 from utils import losses, ramps
+from config import read_arguments
 
-reg = False
-ema = True
+opt = read_arguments()
+reg = opt.regression
+ema = opt.EMA
 writer = SummaryWriter("logs")
-device = "cuda"
+device = opt.device
 
 
 if not reg:

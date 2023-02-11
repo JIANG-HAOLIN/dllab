@@ -12,11 +12,15 @@ import os
 import albumentations as A
 import cv2
 import pandas as pd
-# path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/IDRID_dataset/images/resized_test/IDRiD_001.jpg"
+import sys
+sys.path.append("D:\DLlab\dl-lab-22w-team15\diabetic_retinopathy")
+from config import read_arguments
 
+opt = read_arguments()
+root_path = opt.root_path
+batchsize = opt.batch_size
+wanted_size = opt.wanted_size
 
-root_path = os.path.join(r"D:\labdata")
-batchsize = 1
 
 
 class Lab_Dataset(Dataset):
@@ -96,7 +100,7 @@ train_transforms = transforms.Compose(
 val_transforms = transforms.Compose(
     [
         transforms.ToTensor(),
-        transforms.Resize([512, 512]),
+        transforms.Resize([wanted_size, wanted_size]),
         transforms.Normalize(
             mean=[0.5424, 0.2638, 0.0875],
             std=[0.4982, 0.4407, 0.2826],
@@ -107,7 +111,7 @@ val_transforms = transforms.Compose(
 kaggle_transforms_test = transforms.Compose(
     [
         transforms.ToTensor(),
-        transforms.Resize([512, 512]),
+        transforms.Resize([wanted_size, wanted_size]),
         transforms.Normalize(
             mean=[0.4408, 0.3105, 0.2273],
             std=[0.4965, 0.4627, 0.4191]),
@@ -117,7 +121,7 @@ kaggle_transforms_test = transforms.Compose(
 kaggle_transforms = transforms.Compose(
     [
         transforms.ToTensor(),
-        transforms.Resize([512, 512]),
+        transforms.Resize([wanted_size, wanted_size]),
         transforms.Normalize(
             mean=[0.4408, 0.3105, 0.2273],
             std=[0.4965, 0.4627, 0.4191]),
