@@ -1,4 +1,4 @@
-# TeamXX
+# Team15
 - Haolin Jiang (st176083)
 - Diandian Guo (st175733)
 
@@ -34,7 +34,11 @@ For the mean teacher experiment, run master/diabetic_retinopathy/mean_teacher.py
 
 For the HAPT experiment, run  master/HAPT/train.py
 
-# checkpoints
+# About batchsize
+
+Our experiment results are heavily affected by the batchsize. The larger, the better. You can change the default batchsize in config.py.
+
+# Checkpoints
 
 For ensemble learning, please place the saved checkpoints in the folder and define the folder path in dl-lab-22w-team15/diabetic_retinopathy/evaluation/ensemble.py.
 
