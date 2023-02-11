@@ -3,13 +3,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
+from einops.layers.torch import Rearrange
 
 
 
-
-
-
-# classes
 class seq2token(nn.Module):
     def __init__(self, patch_length, patch_dim, token_dim):
         super(seq2token, self).__init__()
@@ -69,7 +66,7 @@ class Attention(nn.Module):
         self.inner_dim = inner_dim
         self.num_heads = num_heads
         self.dim_head = dim_head
-        self.coefficient = torch.rsqrt(torch.Tensor([dim_head]))
+        self.coefficient = torch.rsqrt(torch.Tensor([dim_head])).to('cpu')
         self.layernorm = nn.LayerNorm(token_dim)
         self.WQ = nn.Linear(token_dim, inner_dim, bias = False)
         self.WK = nn.Linear(token_dim, inner_dim, bias = False)
@@ -106,8 +103,8 @@ class Transformer(nn.Module):
         x = torch.mean(x, dim=1)
         return x
 
-class Encoder(nn.Module):
-    def __init__(self, *, sequence_length=250, patch_length=10, num_classes=12, token_dim=512, num_blocks=6, num_heads=8, hidden_size=1024, channels = 6, dim_head = 64):
+class Encoder_s2s(nn.Module):
+    def __init__(self, *, sequence_length=250, patch_length=10, num_classes=12, token_dim=512, num_blocks=6, num_heads=8, hidden_size=1024, channels = 6, dim_head = 64,how=None):
         super().__init__()
         patch_dim = channels * patch_length
         self.input_preprocess = input_preprocess(patch_length=patch_length, patch_dim=patch_dim, token_dim=token_dim)
@@ -116,11 +113,15 @@ class Encoder(nn.Module):
                                        num_heads=num_heads,
                                        dim_head=dim_head,
                                        hidden_size=hidden_size)
-        self.classifier = nn.Sequential(
+        self.unfold = nn.Sequential(
             nn.LayerNorm(token_dim),
-            nn.Linear(token_dim, num_classes),
-            # nn.Softmax(dim=-1)
+            Rearrange('batch num_patch (patch_length channel)->batch (num_patch patch_length) channel ',patch_length=patch_length),)
+        self.classifier = nn.Sequential(
+            nn.Linear(600, 12),
+            nn.Softmax(dim=-1),
+            nn.Flatten()
         )
+
 
 
     def forward(self, x):
@@ -128,23 +129,3 @@ class Encoder(nn.Module):
         x = self.transformer(x)
         x = self.classifier(x)
         return x
-
-
-
-# if __name__ == '__main__':
-#
-#     v = Encoder(
-#         sequence_length = 250,
-#         patch_length = 10,
-#         num_classes = 12,
-#         token_dim = 512,
-#         num_blocks = 6,
-#         num_heads = 8,
-#         hidden_size = 1024,
-#         channels = 6,
-#         dim_head = 64
-#     )
-#
-#     time_series = torch.randn(32, 6, 250)
-#     logits = v(time_series) # (4, 1000)
-#     print(logits.shape,torch.sum(logits[0]))
