@@ -14,7 +14,7 @@ def add_all_arguments(parser):
     #--- general options ---
     parser.add_argument('--root_path', type=str, default=r"D:\labdata")
     parser.add_argument('--wanted_size', type=int, default=512)
-    parser.add_argument('--batch_size', type=int, default=1, help='input batch size')
+    parser.add_argument('--batch_size', type=int, default=6, help='input batch size')
     parser.add_argument('--out_name', type=str, default='grad-cam-try', help='result png name')
     parser.add_argument('--regression', action='store_true', help="regressive model or normal")
     parser.add_argument('--device', type=str, default='cuda')
