@@ -66,7 +66,7 @@ class Attention(nn.Module):
         self.inner_dim = inner_dim
         self.num_heads = num_heads
         self.dim_head = dim_head
-        self.coefficient = torch.rsqrt(torch.Tensor([dim_head])).to('cpu')
+        self.coefficient = torch.rsqrt(torch.Tensor([dim_head])).to('cuda')
         self.layernorm = nn.LayerNorm(token_dim)
         self.WQ = nn.Linear(token_dim, inner_dim, bias = False)
         self.WK = nn.Linear(token_dim, inner_dim, bias = False)
@@ -100,7 +100,6 @@ class Transformer(nn.Module):
         for attention, feedfoward in self.attention_blocks:
             x = attention(x) + x
             x = feedfoward(x) + x
-        x = torch.mean(x, dim=1)
         return x
 
 class Encoder_s2s(nn.Module):
@@ -113,19 +112,17 @@ class Encoder_s2s(nn.Module):
                                        num_heads=num_heads,
                                        dim_head=dim_head,
                                        hidden_size=hidden_size)
-        self.unfold = nn.Sequential(
+        self.unfold_classifier = nn.Sequential(
             nn.LayerNorm(token_dim),
-            Rearrange('batch num_patch (patch_length channel)->batch (num_patch patch_length) channel ',patch_length=patch_length),)
-        self.classifier = nn.Sequential(
-            nn.Linear(600, 12),
-            nn.Softmax(dim=-1),
-            nn.Flatten()
+            Rearrange('batch num_patch (patch_length channel)->batch (num_patch patch_length) channel ',patch_length=patch_length),
+            nn.Linear(60,12),
+            nn.Softmax(dim=-1)
         )
-
-
 
     def forward(self, x):
         x = self.input_preprocess(x)
         x = self.transformer(x)
-        x = self.classifier(x)
+        # print(x.shape)
+        # print(x.shape)
+        x = self.unfold_classifier(x)
         return x
