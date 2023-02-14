@@ -127,10 +127,10 @@ parameters_dict = {
 sweep_config['parameters'] = parameters_dict
 
 sweep_id = wandb.sweep(sweep_config, project="pytorch-sweeps-demo")
-# wandb.init()
+wandb.init()
 
 if __name__ == '__main__':
-    # wandb.agent(sweep_id, train, count=50)
+    wandb.agent(sweep_id, train, count=50)
     train()
 
 
