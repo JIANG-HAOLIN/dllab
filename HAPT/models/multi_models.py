@@ -19,7 +19,6 @@ class model_HAPT(nn.Module):
         self.window_size = window_size
         #input [Batchsize,windows length, 6]
         self.rnn.append(nn.LSTM(input_size=6,hidden_size=hidden_size,num_layers=num_layers,bidirectional=bidirectional,dropout=0.2))
-        ##输出[B,250,1或2xhidden_size]
         self.h0 = torch.randn(self.coeffienct*num_layers,self.batch_size,hidden_size).to(device)##(num_layers*num_direction,batch,hidden_size)
         self.c0 = torch.randn(self.coeffienct*num_layers,self.batch_size,hidden_size).to(device)
 
@@ -107,7 +106,6 @@ class model_gru_HAPT(nn.Module):
         self.window_size = window_size
         #input[Batchsize,windows length, 6]
         self.rnn.append(nn.GRU(input_size=6,hidden_size=hidden_size,num_layers=num_layers,bidirectional=bidirectional,dropout=0.2))
-        ##输出[B,250,1或2xhidden_size]
         self.h0 = torch.randn(self.coeffienct*num_layers,self.batch_size,hidden_size).to(device)##(num_layers*num_direction,batch,hidden_size)
 
         # self.rnn.append(nn.LSTM(input_size=2*32, hidden_size=16, num_layers=2, bidirectional=True, batch_first=True,dropout=0.2))
@@ -305,7 +303,6 @@ class model_HAR(nn.Module):
         self.window_size = window_size
         #input[Batchsize,windows length, 6]
         self.rnn.append(nn.LSTM(input_size=6,hidden_size=hidden_size,num_layers=num_layers,bidirectional=bidirectional,dropout=0.2))
-        ##输出[B,250,1或2xhidden_size]
         self.h0 = torch.randn(self.coeffienct*num_layers,self.batch_size,hidden_size).to(device)##(num_layers*num_direction,batch,hidden_size)
         self.c0 = torch.randn(self.coeffienct*num_layers,self.batch_size,hidden_size).to(device)
         # self.rnn.append(nn.LSTM(input_size=2*32, hidden_size=16, num_layers=2, bidirectional=True, batch_first=True,dropout=0.2))
@@ -351,7 +348,6 @@ class model_gru_HAR(nn.Module):
         self.window_size = window_size
         #input[Batchsize,windows length, 6]
         self.rnn.append(nn.GRU(input_size=6,hidden_size=hidden_size,num_layers=num_layers,bidirectional=bidirectional,dropout=0.2))
-        ##输出[B,250,1或2xhidden_size]
         self.h0 = torch.randn(self.coeffienct*num_layers,self.batch_size,hidden_size).to(device)##(num_layers*num_direction,batch,hidden_size)
 
         # self.rnn.append(nn.LSTM(input_size=2*32, hidden_size=16, num_layers=2, bidirectional=True, batch_first=True,dropout=0.2))
@@ -375,7 +371,7 @@ class model_gru_HAR(nn.Module):
         output = output.permute(1,0,2)
 
         # output = output.permute(0,1,2)
-        # output = output[:,-1,:]##last time stamp output
+        # output = output[:,-1,:]
 
 
 
