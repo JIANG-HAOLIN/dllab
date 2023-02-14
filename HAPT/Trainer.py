@@ -52,7 +52,7 @@ def Trainer(mdl = None,
     ##### wandb
 
             optimizer.zero_grad()
-            loss.backward()##not backwards....
+            loss.backward()
             optimizer.step()
 
             if cur_iter % 10 == 0:
