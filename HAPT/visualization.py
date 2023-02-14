@@ -20,8 +20,8 @@ def visualization(usr='25',exp='50',result_dict = None,true_dict=None):
     # print(result_dict[usr][exp])
 
 
-    acc_path = f'/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/RawData/acc_exp{exp}_user{usr}.txt'
-    gyrp_path = f'/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/RawData/gyro_exp{exp}_user{usr}.txt'
+    acc_path = f'/DL_Lab/dl-lab-22w-team15/HAPT/RawData/acc_exp{exp}_user{usr}.txt'
+    gyrp_path = f'/DL_Lab/dl-lab-22w-team15/HAPT/RawData/gyro_exp{exp}_user{usr}.txt'
     with open(acc_path) as acc:
         file_acc = acc.readlines()
     with open(gyrp_path) as gyro:
