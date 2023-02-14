@@ -130,22 +130,3 @@ class Encoder(nn.Module):
         return x
 
 
-
-# if __name__ == '__main__':
-#
-#     v = Encoder(
-#         sequence_length = 250,
-#         patch_length = 10,
-#         num_classes = 12,
-#         token_dim = 512,
-#         num_blocks = 6,
-#         num_heads = 8,
-#         hidden_size = 1024,
-#         channels = 6,
-#         dim_head = 64
-#     )
-#
-#     time_series = torch.randn(32, 6, 250)
-#     logits = v(time_series) # (4, 1000)
-#     print(logits.shape,torch.sum(logits[0]))
-
