@@ -14,7 +14,7 @@ import os
 from inputpipeline.preprocessing import preprocessing
 
 
-root_path ='/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/realworld2016_dataset/'
+root_path ='/DL_Lab/dl-lab-22w-team15/HAPT/realworld2016_dataset/'
 
 class dataset_HAR(Dataset):
     def __init__(self,mode='train',position='chest',root_path=root_path,win_len=250,shift=125):
@@ -62,7 +62,7 @@ class dataset_HAR(Dataset):
                     print('error')
             # print('\n\nin total %d sequences' % len(self.samples),
             #   'window length  %d samples' % self.samples[0].shape[1])
-        self.samples = torch.cat(self.samples, dim=0)  #####！！若由list变tensor必须具有单一维度！！
+        self.samples = torch.cat(self.samples, dim=0)
 
 
     def csv2tensor(self,root_path,acc_folder_path,gyr_folder_path,position):
@@ -108,11 +108,11 @@ class dataset_HAR(Dataset):
 
 
 
-def get_dataloader_HAR(mode='train',Window_shift=125,Window_length=250,batch_size=3,shuffle=True,root_path='/Users/hlj/Documents/NoSync.nosync/DL_Lab/dl-lab-22w-team15/HAPT/realworld2016_dataset/'):
+def get_dataloader_HAR(mode='train',Window_shift=125,Window_length=250,batch_size=3,shuffle=True,root_path='/DL_Lab/dl-lab-22w-team15/HAPT/realworld2016_dataset/'):
     dataset =dataset_HAR(mode=mode,shift=125,win_len=250,root_path = root_path)
     return DataLoader(dataset,batch_size=batch_size,shuffle=shuffle,drop_last=True)
 
-##测试dataset
+
 # train_loader = get_dataloader_HAR(mode='validation',Window_shift=125,Window_length=250,batch_size=1,shuffle=True)
 # for step,data in enumerate(train_loader):##!!!!!!
 #     if step <= 1:
