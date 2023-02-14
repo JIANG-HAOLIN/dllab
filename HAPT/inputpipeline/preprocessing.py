@@ -16,7 +16,7 @@ def preprocessing(root_path):
     usr_dict = {}
     for file_name in os.listdir(root_path):
         if file_name != "labels.txt" and file_name != '.DS_Store':
-            usr_index = int(file_name[-6:-4])##!!!! if -1 -> does not include last one!!!!
+            usr_index = int(file_name[-6:-4])
             exp_index = int(file_name[-13:-11])
             if usr_index in usr_dict.keys():
                 if not exp_index in usr_dict[usr_index].keys():
