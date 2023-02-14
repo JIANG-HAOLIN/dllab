@@ -11,7 +11,6 @@ import os
 from inputpipeline.preprocessing import preprocessing
 
 
-##training dataset共2550, validation dataset共423
 class creat_Dataset(Dataset):
     def __init__(self, mode='train', Window_shift=125, Window_length=250, batchsize=32, data_root_path='HAPT/RawData/'):
         print(f'{mode} ' + 'dataset:HAPT','mode:s2l')
@@ -32,7 +31,7 @@ class creat_Dataset(Dataset):
         self.file = []
         self.interval = []
         for usr_idx in self.usr_index:
-            for exp_idx in self.label_dict[usr_idx]:  ###!!!!!!迭代的是key!!!!!
+            for exp_idx in self.label_dict[usr_idx]:
                 filename = self.label_dict[usr_idx][exp_idx][0].strip('o')
                 acc_file_path = 'acc' + filename
                 gyro_file_path = 'gyro' + filename
@@ -58,7 +57,7 @@ class creat_Dataset(Dataset):
                         # print(f'sequence {start}--{end}(sequence length{sequence_length}) from file exp{exp_idx} can\'t form a window length of {self.win_len}!')
                         pass
         # print('\n\nin total %d sequences' % len(self.samples),'window length  %d samples' % self.samples[0].shape[1])
-        self.samples = torch.cat(self.samples, dim=0)  #####！！若由list变tensor必须具有单一维度！！
+        self.samples = torch.cat(self.samples, dim=0)
 
     def string_list_to_tensor(self, data_root_path, acc_file_path=None, gyro_file_path=None):
         with open(data_root_path + acc_file_path) as acc:
@@ -139,7 +138,7 @@ class creat_Dataset_s2s(Dataset):
                     self.source.append(torch.Tensor(source_sequence))
 
         # print('\n\nin total %d sequences' % len(self.samples),'window length  %d samples' % self.samples[0].shape[1])
-        # self.samples = torch.cat(self.samples,dim=0)#####！！若由list变tensor必须具有单一维度！！
+        # self.samples = torch.cat(self.samples,dim=0)
 
     def string_list_to_tensor(self, label_dict, usr_idx, exp_idx, data_root_path, acc_file_path=None,
                               gyro_file_path=None):
@@ -207,7 +206,7 @@ def get_dataloader(how='s2l', mode='train', Window_shift=125, Window_length=250,
 
 
 
-##测试dataset
+
 # data_root_path = "/Users/hlj/Documents/NoSync.nosync/DL_Lab/HAPT Data Set/RawData/"
 # train_loader = get_dataloader(how = 's2l',mode='train',Window_shift=125,Window_length=250,batch_size=1,shuffle=True,root_path=data_root_path)
 #
