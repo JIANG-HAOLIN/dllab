@@ -76,8 +76,6 @@ def train(config=None):
     with wandb.init(config=None):
         config = wandb.config
         print(config)
-        # If called by wandb.agent, as below,
-        # this config will be set by Sweep Controller
         Trainer(mdl=mdl,
                 loss_computer=loss_computer,
                 # optimizer=torch.optim.Adam(mdl.parameters(), lr=config.learning_rate, weight_decay=5e-3),
@@ -91,14 +89,12 @@ def train(config=None):
                 batch_size=batch_size,
                 )
 
-# 超参数搜索方法，可以选择：grid random bayes
 sweep_config = {
     'method': 'bayes',
     'name': 'sweep',
     'metric': {'goal': 'maximize', 'name': 'val_acc'},
     }
 
-# 参数范围
 parameters_dict = {
     # 'num_filter':{
     #     'values':[3, 4, 5]
@@ -110,19 +106,13 @@ parameters_dict = {
     #       'values': [0.3, 0.4, 0.5]
     #     },
     'learning_rate': {
-        # a flat distribution between 0 and 0.1
         'values':[1e-3,1e-4,1e-5]
       },
     'epoch': {
         'values': [5, 10, 15]
     },
     'batch_size': {
-        # integers between 32 and 256
-        # with evenly-distributed logarithms
-        # 'distribution': 'q_log_uniform',
-        # 'q': 1,
-        # 'min': math.log(32),
-        # 'max': math.log(256),
+
         'values':[32,64]
       },
     'hidden_size': {
