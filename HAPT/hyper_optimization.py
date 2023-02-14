@@ -96,15 +96,12 @@ sweep_config = {
     }
 
 parameters_dict = {
-    # 'num_filter':{
-    #     'values':[3, 4, 5]
-    #     },
-    # 'optimizer': {
-    #     'values': ['adam', 'sgd']
-    #     },
-    # 'dropout': {
-    #       'values': [0.3, 0.4, 0.5]
-    #     },
+    'optimizer': {
+        'values': ['adam', 'sgd']
+        },
+    'dropout': {
+          'values': [0.3, 0.4, 0.5]
+        },
     'learning_rate': {
         'values':[1e-3,1e-4,1e-5]
       },
