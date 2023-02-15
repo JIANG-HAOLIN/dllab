@@ -40,13 +40,13 @@ class Plotting():
     def plot_results(self):
         fig = plt.figure()
         plt.plot(self.cur, self.store_val, label="val_loss")  # plot example
-        plt.plot(self.cur, self.store_test, label="test_loss")
+        # plt.plot(self.cur, self.store_test, label="test_loss")
         plt.legend(loc='upper left')
         fig.savefig('loss.png')
 
         fig2 = plt.figure()
         plt.plot(self.cur, self.store_acu_val, label="val_accuracy")  # plot example
-        plt.plot(self.cur, self.store_acu_test, label="test_accuracy")
+        # plt.plot(self.cur, self.store_acu_test, label="test_accuracy")
         plt.legend()
         fig2.savefig('accuracy.png')
 
@@ -58,10 +58,10 @@ class Plotting():
         plt.legend(loc='upper left')
         fig3.savefig('val_Confusion_Matrix.png')
 
-        fig4 = plt.figure()
-        plt.plot(self.cur, self.store_tp_test, label="TP")  # plot example
-        plt.plot(self.cur, self.store_tn_test, label="TN")  # plot example
-        plt.plot(self.cur, self.store_fp_test, label="FP")  # plot example
-        plt.plot(self.cur, self.store_fn_test, label="FN")  # plot example
-        plt.legend(loc='upper left')
-        fig4.savefig('test_Confusion_Matrix.png')
+        # fig4 = plt.figure()
+        # plt.plot(self.cur, self.store_tp_test, label="TP")  # plot example
+        # plt.plot(self.cur, self.store_tn_test, label="TN")  # plot example
+        # plt.plot(self.cur, self.store_fp_test, label="FP")  # plot example
+        # plt.plot(self.cur, self.store_fn_test, label="FN")  # plot example
+        # plt.legend(loc='upper left')
+        # fig4.savefig('test_Confusion_Matrix.png')

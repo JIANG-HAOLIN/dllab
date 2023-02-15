@@ -10,6 +10,7 @@ from evaluation.metrics import compute_matrix, compute_matrix_CE
 from torch.utils.tensorboard import SummaryWriter
 from utils import losses, ramps
 from config import read_arguments
+from evaluation.eval import Plotting
 
 opt = read_arguments()
 ema = opt.EMA
@@ -17,7 +18,7 @@ writer = SummaryWriter("logs")
 device = opt.device
 
 
-
+plotting = Plotting()
 loss_fc = nn.CrossEntropyLoss()
 mdl = get_efficient_model(pretrained=True).to(device)
 train_loader = train_loader
@@ -47,13 +48,13 @@ def update_ema_variables(model, ema_model, global_step, alpha=0.98):
     for ema_param, param in zip(ema_model.parameters(), model.parameters()):
         ema_param.data.mul_(alpha).add_(1 - alpha, param.data)
 
-store = []
-store_acu = []
-store_tp = []
-store_tn = []
-store_fp = []
-store_fn = []
-cur = []
+# store = []
+# store_acu = []
+# store_tp = []
+# store_tn = []
+# store_fp = []
+# store_fn = []
+# cur = []
 round = 100000
 best_acu = 0
 
@@ -105,7 +106,7 @@ for cur_iter, rd in enumerate(range(round)):
 
     if cur_iter % 10 == 0:
         writer.add_scalar("train loss", loss.item(), cur_iter)
-        cur.append(cur_iter)
+        # cur.append(cur_iter)
         mdl.eval()
         loss_val = 0
         acu, tp, tn, fp, fn = 0, 0, 0, 0, 0
@@ -127,39 +128,16 @@ for cur_iter, rd in enumerate(range(round)):
 
         mdl.train()
         ema_mdl.train()
+        plotting.cur_update(cur_iter)
+        plotting.validation_update(loss_val, acu, tp, tn, fp, fn)
+        plotting.plot_results()
 
-        store.append(loss_val.item())
-        store_acu.append(acu)
-        store_tp.append(tp)
-        store_tn.append(tn)
-        store_fp.append(fp)
-        store_fn.append(fn)
-        writer.add_scalar("test loss", loss_val.item(), cur_iter)
-        writer.add_scalar("test accuracy", acu, cur_iter)
+        writer.add_scalar("val loss", loss_val.item(), cur_iter)
+        writer.add_scalar("val accuracy", acu, cur_iter)
 
         if acu > best_acu:
             best_acu = acu
             torch.save(mdl.state_dict(), "./best_epoch.pth")
-
-
-        fig = plt.figure()
-        plt.plot(cur, store, label="val_loss")  # plot example
-        plt.legend()
-        fig.savefig('loss.png')
-
-        fig2 = plt.figure()
-        plt.plot(cur, store_acu, label="accuracy")  # plot example
-        plt.legend()
-        fig2.savefig('accuracy.png')
-
-        fig3 = plt.figure()
-        plt.plot(cur, store_tp, label="TP")  # plot example
-        plt.plot(cur, store_tn, label="TN")  # plot example
-        plt.plot(cur, store_fp, label="FP")  # plot example
-        plt.plot(cur, store_fn, label="FN")  # plot example
-        plt.legend(loc='upper left')
-        fig3.savefig('Confusion_Matrix.png')
-        plt.cla()
 
 writer.close()
 
