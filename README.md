@@ -28,7 +28,7 @@ Please contact Haolin for permission before downloading the dataset from his goo
 
 Put the downloaded datasets in ./Labdata.
 
-For the simple model diabetic retinopathy expriment, run simple_diabetic branch/diabetic_retinopathy/train.py
+For the original model diabetic retinopathy experiment, run simple_diabetic branch/diabetic_retinopathy/train.py
 
 For the mean teacher experiment, run master/diabetic_retinopathy/mean_teacher.py
 
@@ -48,7 +48,7 @@ If you need the pretrained model, please ask Haolin for help.
 
 
 # Results
-Simple diabetic retinopathy classification model:                    71% accuracy on labdata test set,   27% accuracy on Kaggle test set                         
+No transfer learning diabetic retinopathy classification model:                    71% accuracy on labdata test set,   27% accuracy on Kaggle test set                         
 
 Transferred diabetic retinopathy classification model from efficientnet b7:   89% accuracy on labdata test set,   37% accuracy on Kaggle test set
 
