@@ -3,10 +3,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
-from einops.layers.torch import Rearrange
 
 
 
+
+
+
+# classes
 class seq2token(nn.Module):
     def __init__(self, patch_length, patch_dim, token_dim):
         super(seq2token, self).__init__()
@@ -100,9 +103,10 @@ class Transformer(nn.Module):
         for attention, feedfoward in self.attention_blocks:
             x = attention(x) + x
             x = feedfoward(x) + x
+        x = torch.mean(x, dim=1)
         return x
 
-class Encoder_s2s(nn.Module):
+class Encoder(nn.Module):
     def __init__(self, *, sequence_length=250, patch_length=10, num_classes=12, token_dim=512, num_blocks=6, num_heads=8, hidden_size=1024, channels = 6, dim_head = 64,how=None):
         super().__init__()
         patch_dim = channels * patch_length
@@ -112,17 +116,17 @@ class Encoder_s2s(nn.Module):
                                        num_heads=num_heads,
                                        dim_head=dim_head,
                                        hidden_size=hidden_size)
-        self.unfold_classifier = nn.Sequential(
+        self.classifier = nn.Sequential(
             nn.LayerNorm(token_dim),
-            Rearrange('batch num_patch (patch_length channel)->batch (num_patch patch_length) channel ',patch_length=patch_length),
-            nn.Linear(60,12),
+            nn.Linear(token_dim, num_classes),
             nn.Softmax(dim=-1)
         )
+
 
     def forward(self, x):
         x = self.input_preprocess(x)
         x = self.transformer(x)
-        # print(x.shape)
-        # print(x.shape)
-        x = self.unfold_classifier(x)
+        x = self.classifier(x)
         return x
+
+

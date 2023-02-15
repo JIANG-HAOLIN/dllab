@@ -32,19 +32,17 @@ bidirectional = opt.bidirectional
 out_name = opt.out_name+'b'+str(batch_size)+'hidden'+str(hidden_size)+'layer'+str(num_layers)
 
 
-# test_loader = get_dataloader_HAR(mode='test', Window_shift=125, Window_length=250, batch_size=batch_size,
-#                                        shuffle=True, root_path='./realworld2016_dataset/')
 
 # how = 's2l'
-# file_name = 'bi4b64hidden12layer2best_epoch.pth'
+# how = 's2s'
+# test_loader = get_dataloader_HAR(mode='test',Window_shift=125,Window_length=250,
+#                                    batch_size=batch_size,shuffle=False,root_path='./realworld2016_dataset/')
 
-how = 's2s'
-test_loader = get_dataloader_HAR(mode='test',Window_shift=125,Window_length=250,
-                                   batch_size=batch_size,shuffle=False,root_path='./realworld2016_dataset/')
 # file_name = 'pthHAPT_lstm_s2s_lstm_cnn_b64hidden24layer3_88_1540_.pth'
-file_name = 'pthHAR_transformer_transformerb64hidden12layer2_90_2300_.pth'
+# file_name = 'pthHAR_transformer_transformerb64hidden12layer2_90_2300_.pth'
 
 # file_name = 'HAPT_transformer_validation_accuracyb32hidden24layer2best_epoch.pth'
+
 # mdl = model_HAPT(batchsize=batch_size,device=device,hidden_size =24,
 #             num_layers=3,bidirectional=True,window_size=250,how=how).to(device)
 # mdl = model_gru_HAPT(batchsize=batch_size,device=device,hidden_size =12,
@@ -55,7 +53,7 @@ file_name = 'pthHAR_transformer_transformerb64hidden12layer2_90_2300_.pth'
 # mdl = model_gru_HAR(batchsize=batch_size, device=device, hidden_size=12,
 #                         num_layers=2, bidirectional=True, window_size=window_size,).to(device)
 # mdl = Conv_lstm_realworld(device=device,num_lstm_layers=2,hidden_size=96,batch_size=batch_size)
-mdl = model_transformer_HAR(batchsize=batch_size,num_classes=8,seq_len=window_size)
+# mdl = model_transformer_HAR(batchsize=batch_size,num_classes=8,seq_len=window_size)
 
 mdl.load_state_dict(torch.load(file_name,map_location=torch.device('cpu')))
 mdl.eval()
