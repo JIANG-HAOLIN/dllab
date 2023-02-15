@@ -48,13 +48,6 @@ def update_ema_variables(model, ema_model, global_step, alpha=0.98):
     for ema_param, param in zip(ema_model.parameters(), model.parameters()):
         ema_param.data.mul_(alpha).add_(1 - alpha, param.data)
 
-# store = []
-# store_acu = []
-# store_tp = []
-# store_tn = []
-# store_fp = []
-# store_fn = []
-# cur = []
 round = 100000
 best_acu = 0
 
@@ -106,7 +99,6 @@ for cur_iter, rd in enumerate(range(round)):
 
     if cur_iter % 10 == 0:
         writer.add_scalar("train loss", loss.item(), cur_iter)
-        # cur.append(cur_iter)
         mdl.eval()
         loss_val = 0
         acu, tp, tn, fp, fn = 0, 0, 0, 0, 0
