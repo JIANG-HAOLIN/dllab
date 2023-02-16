@@ -8,13 +8,13 @@ Our code is based on Pytorch. You can install pytorch with "pip install torch to
 
 # Dataset
 
-Our original model diabetic retinopathy experiments uses the lab dataset, you can download the dataset from this link: https://ilias3.uni-stuttgart.de/ilias.php?ref_id=3124763&page=Datasets&wpg_id=10386&cmd=downloadFile&cmdClass=ilwikipagegui&cmdNode=192:tv:195&baseClass=ilwikihandlergui&file_id=il__file_2896881 
+Our original diabetic retinopathy experiments uses the lab dataset, you can download the dataset from this link: https://ilias3.uni-stuttgart.de/ilias.php?ref_id=3124763&page=Datasets&wpg_id=10386&cmd=downloadFile&cmdClass=ilwikipagegui&cmdNode=192:tv:195&baseClass=ilwikihandlergui&file_id=il__file_2896881 
 
 Please do the preprocessing before feeding the data into our network. We have two preprocessing steps in the diabetic_retinopathy/input_pipeline. Step 1: remove the black edges of the images(preprocessing.py). Step2: calculate the mean and variance of the images(find_mean_and_std.py). 
 
-To run the HAPT experiments, please dowbnload the HAPT dataset from: https://ilias3.uni-stuttgart.de/ilias.php?ref_id=3124763&page=Datasets&wpg_id=10386&cmd=downloadFile&cmdClass=ilwikipagegui&cmdNode=192:tv:195&baseClass=ilwikihandlergui&file_id=il__file_2897015
+To run the HAPT experiments, please download the HAPT dataset from: https://ilias3.uni-stuttgart.de/ilias.php?ref_id=3124763&page=Datasets&wpg_id=10386&cmd=downloadFile&cmdClass=ilwikipagegui&cmdNode=192:tv:195&baseClass=ilwikihandlergui&file_id=il__file_2897015
 
-Our mean teacher expriments uses additional Kaggle dataset for unsupervised training and testing. We provide preprocessed Kaggle dataset here: 
+Our mean teacher experiments uses additional Kaggle dataset for unsupervised training and testing. We provide preprocessed Kaggle dataset here: 
 
 728x728 size:  https://drive.google.com/drive/folders/1smBxnf8LYucqHuDMT5I_Z5G5FDjLW5AF?usp=sharing
 
@@ -28,7 +28,7 @@ Please contact Haolin for permission before downloading the dataset from his goo
 
 Put the downloaded datasets in ./Labdata.
 
-For the original model diabetic retinopathy experiment, run simple_diabetic branch/diabetic_retinopathy/train.py
+For the original diabetic retinopathy experiment, run simple_diabetic branch/diabetic_retinopathy/train.py
 
 For the mean teacher experiment, run master/diabetic_retinopathy/mean_teacher.py
 
@@ -48,9 +48,9 @@ If you need the pretrained model, please ask Haolin for help.
 
 
 # Results
-No transfer learning simple diabetic retinopathy classification model:                    71% accuracy on labdata test set                        
+No transfer learning  diabetic retinopathy classification model:                    71% accuracy on labdata test set                        
 
-Transferred simple diabetic retinopathy classification model from efficientnet b7:   89% accuracy on labdata test set
+Transferred diabetic retinopathy classification model from efficientnet b7:   89% accuracy on labdata test set
 
 Mean teacher model:              88% accuracy on labdata test set,   80% accuracy on Kaggle test set
 
