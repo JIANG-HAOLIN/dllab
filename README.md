@@ -48,9 +48,9 @@ If you need the pretrained model, please ask Haolin for help.
 
 
 # Results
-No transfer learning diabetic retinopathy classification model:                    71% accuracy on labdata test set,   27% accuracy on Kaggle test set                         
+No transfer learning simple diabetic retinopathy classification model:                    71% accuracy on labdata test set                        
 
-Transferred diabetic retinopathy classification model from efficientnet b7:   89% accuracy on labdata test set,   37% accuracy on Kaggle test set
+Transferred simple diabetic retinopathy classification model from efficientnet b7:   89% accuracy on labdata test set
 
 Mean teacher model:              88% accuracy on labdata test set,   80% accuracy on Kaggle test set
 
